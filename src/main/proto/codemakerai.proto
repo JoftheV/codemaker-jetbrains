@@ -103,6 +103,7 @@ message AssistantCodeCompletionOptions {
 
 message PredictionOptions {
   string contextId = 1;
+  string model = 2;
 }
 
 message ProcessRequest {

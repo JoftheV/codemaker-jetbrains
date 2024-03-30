@@ -222,8 +222,8 @@ class CodeMakerService(private val project: Project) {
     }
 
     @Throws(InterruptedException::class)
-    private fun predictiveProcess(client: Client, language: Language, source: String, contextId: String?) {
-        client.predict(createPredictRequest(language, source, contextId))
+    private fun predictiveProcess(client: Client, language: Language, source: String, contextId: String?, model: String?) {
+        client.predict(createPredictRequest(language, source, contextId, model))
     }
 
     private fun walkFiles(path: VirtualFile?, iterator: ContentIterator) {
@@ -240,12 +240,14 @@ class CodeMakerService(private val project: Project) {
 
     private fun predictFile(client: Client, file: VirtualFile) {
         try {
+            val model = AppSettingsState.instance.model
+
             val source = readFile(file) ?: return
             val language = FileExtensions.languageFromExtension(file.extension)
 
             val contextId = registerContext(client, language!!, source, file.path)
 
-            predictiveProcess(client, language!!, source, contextId)
+            predictiveProcess(client, language!!, source, contextId, model)
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: UnauthorizedException) {
@@ -420,11 +422,11 @@ class CodeMakerService(private val project: Project) {
         )
     }
 
-    private fun createPredictRequest(language: Language, source: String, contextId: String?): PredictRequest {
+    private fun createPredictRequest(language: Language, source: String, contextId: String?, model: String?): PredictRequest {
         return PredictRequest(
                 language,
                 Input(source),
-                Options(null, null, null, false, false, contextId, null)
+                Options(null, null, null, false, false, contextId, model)
         )
     }
 

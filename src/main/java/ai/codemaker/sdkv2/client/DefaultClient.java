@@ -378,6 +378,7 @@ public final class DefaultClient implements Client {
         return Codemakerai.PredictRequest.newBuilder()
                 .setLanguage(mapLanguage(request.getLanguage()))
                 .setInput(input)
+                .setOptions(createPredictOptions(request.getOptions()))
                 .build();
     }
 
@@ -393,6 +394,18 @@ public final class DefaultClient implements Client {
 
     private PredictResponse createPredictResponse(Codemakerai.PredictResponse response) {
         return new PredictResponse();
+    }
+
+    private Codemakerai.PredictionOptions createPredictOptions(Options options) {
+        final Codemakerai.PredictionOptions.Builder builder = Codemakerai.PredictionOptions.newBuilder();
+
+        final Optional<String> contextId = Optional.ofNullable(options.getContextId());
+        final Optional<String> model = Optional.ofNullable(options.getModel());
+
+        contextId.ifPresent(builder::setContextId);
+        model.ifPresent(builder::setModel);
+
+        return builder.build();
     }
 
     private static Codemakerai.ProcessOptions createProcessOptions(Options options) {
