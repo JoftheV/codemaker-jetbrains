@@ -150,6 +150,11 @@ class CodeMakerService(private val project: Project) {
         }
     }
 
+    fun listModels(): List<Model> {
+        val resp = client.listModels(createListModelsRequest())
+        return resp.models
+    }
+
     private fun process(mode: Mode, title: String, path: VirtualFile?, modify: Modify, codePath: String?, prompt: String? = null) {
         runInBackground(title) {
             try {
@@ -449,6 +454,10 @@ class CodeMakerService(private val project: Project) {
                 Input(source),
                 Options(null, null, null, false, false, contextId, model)
         )
+    }
+
+    private fun createListModelsRequest(): ListModelsRequest? {
+        return ListModelsRequest()
     }
 
     private fun isExtendedContextSupported(mode: Mode): Boolean {

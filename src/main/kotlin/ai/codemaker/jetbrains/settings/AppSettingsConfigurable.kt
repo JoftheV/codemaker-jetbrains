@@ -4,9 +4,10 @@
 package ai.codemaker.jetbrains.settings
 
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
-class AppSettingsConfigurable : Configurable {
+class AppSettingsConfigurable(private val project: Project) : Configurable {
 
     private var settingsComponent: AppSettingsComponent? = null
 
@@ -15,7 +16,7 @@ class AppSettingsConfigurable : Configurable {
     }
 
     override fun createComponent(): JComponent? {
-        settingsComponent = AppSettingsComponent()
+        settingsComponent = AppSettingsComponent(project)
         return settingsComponent!!.panel
     }
 

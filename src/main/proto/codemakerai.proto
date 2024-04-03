@@ -10,6 +10,7 @@ service CodemakerService {
   rpc DiscoverContext (DiscoverSourceContextRequest) returns (DiscoverSourceContextResponse);
   rpc CreateContext (CreateSourceContextRequest) returns (CreateSourceContextResponse);
   rpc RegisterContext (RegisterSourceContextRequest) returns (RegisterSourceContextResponse);
+  rpc ListModels (ListModelsRequest) returns (ListModelsResponse);
 }
 
 enum Mode {
@@ -77,6 +78,11 @@ message CodeSnippetContext {
   string snippet = 2;
   string relativePath = 3;
   double score = 4;
+}
+
+message Model {
+  string id = 1;
+  string name = 2;
 }
 
 message ProcessOptions {
@@ -181,4 +187,12 @@ message RegisterSourceContextRequest {
 
 message RegisterSourceContextResponse {
 
+}
+
+message ListModelsRequest {
+
+}
+
+message ListModelsResponse {
+  repeated Model models = 1;
 }

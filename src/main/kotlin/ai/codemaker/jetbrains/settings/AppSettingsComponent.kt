@@ -3,18 +3,24 @@
  */
 package ai.codemaker.jetbrains.settings
 
+import ai.codemaker.jetbrains.service.CodeMakerService
+import ai.codemaker.sdkv2.client.model.Model
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.*
 import com.intellij.util.ui.FormBuilder
+import javax.swing.DefaultComboBoxModel
+import javax.swing.JButton
 import javax.swing.JPanel
 
-class AppSettingsComponent {
+class AppSettingsComponent(project: Project) {
     private val defaultModel = "default"
 
     val panel: JPanel
     private val apiKeyText = JBTextField()
     private val modelCombo = ComboBox(arrayOf(defaultModel))
+    private val reloadModelsButton = JButton("Refresh")
     private val codeActionsEnabledCheck = JBCheckBox()
     private val autocompletionEnabledCheck = JBCheckBox()
     private val multilineAutocompletionEnabledCheck = JBCheckBox()
@@ -30,11 +36,23 @@ class AppSettingsComponent {
         }
         createAccountLabel.setExternalLinkIcon()
 
+        reloadModelsButton.addActionListener({
+            val service: CodeMakerService = project.getService(CodeMakerService::class.java)
+            val models = service.listModels()
+
+            val allModels = mutableListOf<String>()
+            allModels.add(defaultModel)
+            allModels.addAll(models.map { it.name })
+
+            modelCombo.model = DefaultComboBoxModel(allModels.toTypedArray())
+        })
+
         panel = FormBuilder.createFormBuilder()
                 .addComponent(createAccountLabel)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("API Key: "), apiKeyText, 1, false)
                 .addLabeledComponent(JBLabel("Model: "), modelCombo, 1, false)
+                .addComponentToRightColumn(reloadModelsButton)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("Enable autocompletion: "), autocompletionEnabledCheck, 1, false)
                 .addLabeledComponent(JBLabel("Enable multiline autocompletion: "), multilineAutocompletionEnabledCheck, 1, false)

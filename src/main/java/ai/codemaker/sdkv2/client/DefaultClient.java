@@ -16,7 +16,10 @@ import ai.codemaker.sdkv2.client.model.DiscoverContextRequest;
 import ai.codemaker.sdkv2.client.model.DiscoverContextResponse;
 import ai.codemaker.sdkv2.client.model.Input;
 import ai.codemaker.sdkv2.client.model.Language;
+import ai.codemaker.sdkv2.client.model.ListModelsRequest;
+import ai.codemaker.sdkv2.client.model.ListModelsResponse;
 import ai.codemaker.sdkv2.client.model.Mode;
+import ai.codemaker.sdkv2.client.model.Model;
 import ai.codemaker.sdkv2.client.model.Modify;
 import ai.codemaker.sdkv2.client.model.Options;
 import ai.codemaker.sdkv2.client.model.Output;
@@ -156,6 +159,15 @@ public final class DefaultClient implements Client {
         return createRegisterContextResponse(registerContextResponse);
     }
 
+    @Override
+    public ListModelsResponse listModels(ListModelsRequest request) {
+        final Codemakerai.ListModelsRequest listModelsRequest = createListModelsRequest(request);
+
+        final Codemakerai.ListModelsResponse listModelsResponse = doListModels(listModelsRequest);
+
+        return createListModelsResponse(listModelsResponse);
+    }
+
     private Codemakerai.DiscoverSourceContextResponse doDiscoverContext(Codemakerai.DiscoverSourceContextRequest request) {
         try {
             return client().discoverContext(request);
@@ -243,6 +255,18 @@ public final class DefaultClient implements Client {
     private Codemakerai.PredictResponse doPredict(Codemakerai.PredictRequest request) {
         try {
             return client().predict(request);
+        } catch (StatusRuntimeException e) {
+            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
+            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
+                throw new UnauthorizedException("Unauthorized request.");
+            }
+            throw e;
+        }
+    }
+
+    private Codemakerai.ListModelsResponse doListModels(Codemakerai.ListModelsRequest request) {
+        try {
+            return client().listModels(request);
         } catch (StatusRuntimeException e) {
             logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
             if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
@@ -380,6 +404,19 @@ public final class DefaultClient implements Client {
                 .setInput(input)
                 .setOptions(createPredictOptions(request.getOptions()))
                 .build();
+    }
+
+    private Codemakerai.ListModelsRequest createListModelsRequest(ListModelsRequest request) {
+        return Codemakerai.ListModelsRequest.newBuilder()
+                .build();
+    }
+
+    private ListModelsResponse createListModelsResponse(Codemakerai.ListModelsResponse listModelsResponse) {
+        final List<Model> models = listModelsResponse.getModelsList().stream()
+                .map(value -> new Model(value.getId(), value.getName()))
+                .toList();
+
+        return new ListModelsResponse(models);
     }
 
     private Codemakerai.Input createInput(Input request) {

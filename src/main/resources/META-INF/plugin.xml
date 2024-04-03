@@ -177,7 +177,7 @@
         <notificationGroup id="CodeMaker AI"
                            displayType="BALLOON"/>
 
-        <applicationConfigurable id="ai.codemaker.jetbrains.settings.CodeMakerSettings"
+        <projectConfigurable id="ai.codemaker.jetbrains.settings.CodeMakerSettings"
                                  parentId="tools"
                                  displayName="CodeMaker AI"
                                  instance="ai.codemaker.jetbrains.settings.AppSettingsConfigurable"/>

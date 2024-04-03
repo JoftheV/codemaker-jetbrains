@@ -14,6 +14,8 @@ import ai.codemaker.sdkv2.client.model.CreateContextRequest;
 import ai.codemaker.sdkv2.client.model.CreateContextResponse;
 import ai.codemaker.sdkv2.client.model.DiscoverContextRequest;
 import ai.codemaker.sdkv2.client.model.DiscoverContextResponse;
+import ai.codemaker.sdkv2.client.model.ListModelsRequest;
+import ai.codemaker.sdkv2.client.model.ListModelsResponse;
 import ai.codemaker.sdkv2.client.model.PredictRequest;
 import ai.codemaker.sdkv2.client.model.PredictResponse;
 import ai.codemaker.sdkv2.client.model.ProcessRequest;
@@ -38,4 +40,6 @@ public interface Client {
     CreateContextResponse createContext(CreateContextRequest request);
 
     RegisterContextResponse registerContext(RegisterContextRequest request);
+
+    ListModelsResponse listModels(ListModelsRequest request);
 }
