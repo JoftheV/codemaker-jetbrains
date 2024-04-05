@@ -4,12 +4,12 @@
 package ai.codemaker.jetbrains.settings
 
 import ai.codemaker.jetbrains.service.CodeMakerService
-import ai.codemaker.sdkv2.client.model.Model
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.*
 import com.intellij.util.ui.FormBuilder
+import java.awt.FlowLayout
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JButton
 import javax.swing.JPanel
@@ -20,7 +20,7 @@ class AppSettingsComponent(project: Project) {
     val panel: JPanel
     private val apiKeyText = JBTextField()
     private val modelCombo = ComboBox(arrayOf(defaultModel))
-    private val reloadModelsButton = JButton("Refresh")
+    private val updateModelsButton = JButton("Update")
     private val codeActionsEnabledCheck = JBCheckBox()
     private val autocompletionEnabledCheck = JBCheckBox()
     private val multilineAutocompletionEnabledCheck = JBCheckBox()
@@ -36,7 +36,7 @@ class AppSettingsComponent(project: Project) {
         }
         createAccountLabel.setExternalLinkIcon()
 
-        reloadModelsButton.addActionListener({
+        updateModelsButton.addActionListener({
             val service: CodeMakerService = project.getService(CodeMakerService::class.java)
             val models = service.listModels()
 
@@ -47,12 +47,15 @@ class AppSettingsComponent(project: Project) {
             modelCombo.model = DefaultComboBoxModel(allModels.toTypedArray())
         })
 
+        val modelPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+        modelPanel.add(modelCombo)
+        modelPanel.add(updateModelsButton)
+
         panel = FormBuilder.createFormBuilder()
                 .addComponent(createAccountLabel)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("API Key: "), apiKeyText, 1, false)
-                .addLabeledComponent(JBLabel("Model: "), modelCombo, 1, false)
-                .addComponentToRightColumn(reloadModelsButton)
+                .addLabeledComponent(JBLabel("Model: "), modelPanel, 1, false)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("Enable autocompletion: "), autocompletionEnabledCheck, 1, false)
                 .addLabeledComponent(JBLabel("Enable multiline autocompletion: "), multilineAutocompletionEnabledCheck, 1, false)
