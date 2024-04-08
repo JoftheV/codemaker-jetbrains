@@ -7,7 +7,10 @@ import ai.codemaker.jetbrains.service.CodeMakerService
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.components.*
+import com.intellij.ui.components.ActionLink
+import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
 import java.awt.FlowLayout
 import javax.swing.DefaultComboBoxModel
@@ -19,7 +22,7 @@ class AppSettingsComponent(project: Project) {
 
     val panel: JPanel
     private val apiKeyText = JBTextField()
-    private val modelCombo = ComboBox(arrayOf(defaultModel))
+    private val modelCombo = ComboBox<String>()
     private val updateModelsButton = JButton("Update")
     private val codeActionsEnabledCheck = JBCheckBox()
     private val autocompletionEnabledCheck = JBCheckBox()
@@ -36,16 +39,13 @@ class AppSettingsComponent(project: Project) {
         }
         createAccountLabel.setExternalLinkIcon()
 
-        updateModelsButton.addActionListener({
+        updateModels()
+        updateModelsButton.addActionListener {
             val service: CodeMakerService = project.getService(CodeMakerService::class.java)
-            val models = service.listModels()
+            models = service.listModels().map { it.name }
 
-            val allModels = mutableListOf<String>()
-            allModels.add(defaultModel)
-            allModels.addAll(models.map { it.name })
-
-            modelCombo.model = DefaultComboBoxModel(allModels.toTypedArray())
-        })
+            updateModels()
+        }
 
         val modelPanel = JPanel(FlowLayout(FlowLayout.LEFT))
         modelPanel.add(modelCombo)
@@ -72,6 +72,21 @@ class AppSettingsComponent(project: Project) {
                 .addComponentFillVertically(JPanel(), 0)
                 .panel
     }
+
+    private fun updateModels() {
+        val userModels = models ?: ArrayList()
+
+        val allModels = mutableListOf<String>()
+        allModels.add(defaultModel)
+        allModels.addAll(userModels)
+        modelCombo.model = DefaultComboBoxModel(allModels.toTypedArray())
+    }
+
+    var models: List<String>? = ArrayList()
+        set(value) {
+            field = value ?: ArrayList()
+            updateModels()
+        }
 
     var apiKey: String?
         get() = apiKeyText.text.trim()

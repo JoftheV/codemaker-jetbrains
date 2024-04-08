@@ -16,6 +16,9 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState> {
     var apiKey: String? = null
 
     @JvmField
+    var models: List<String>? = ArrayList()
+
+    @JvmField
     var model: String? = null
 
     @JvmField

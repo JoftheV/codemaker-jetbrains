@@ -27,6 +27,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
     override fun isModified(): Boolean {
         val settings = AppSettingsState.instance
         return settingsComponent!!.apiKey != settings.apiKey
+                || settingsComponent!!.models != settings.models
                 || settingsComponent!!.model != settings.model
                 || settingsComponent!!.codeActionsEnabled != settings.codeActionsEnabled
                 || settingsComponent!!.autocompletionEnabled != settings.autocompletionEnabled
@@ -41,6 +42,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
     override fun apply() {
         val settings = AppSettingsState.instance
         settings.apiKey = settingsComponent!!.apiKey
+        settings.models = settingsComponent!!.models
         settings.model = settingsComponent!!.model
         settings.codeActionsEnabled = settingsComponent!!.codeActionsEnabled
         settings.autocompletionEnabled = settingsComponent!!.autocompletionEnabled
@@ -55,6 +57,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
     override fun reset() {
         val settings = AppSettingsState.instance
         settingsComponent!!.apiKey = settings.apiKey
+        settingsComponent!!.models = settings.models
         settingsComponent!!.model = settings.model
         settingsComponent!!.codeActionsEnabled = settings.codeActionsEnabled
         settingsComponent!!.autocompletionEnabled = settings.autocompletionEnabled
