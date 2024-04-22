@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "ai.codemaker.jetbrains"
-version = "1.43.0"
+version = "1.44.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
