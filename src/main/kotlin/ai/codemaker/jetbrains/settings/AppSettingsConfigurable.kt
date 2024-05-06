@@ -37,6 +37,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
                 || settingsComponent!!.extendedSourceContextDepth != settings.extendedSourceContextDepth
                 || settingsComponent!!.assistantActionsEnabled != settings.assistantActionsEnabled
                 || settingsComponent!!.syntaxAutocorrectionEnabled != settings.syntaxAutocorrectionEnabled
+                || settingsComponent!!.endpoint != settings.endpoint
     }
 
     override fun apply() {
@@ -52,6 +53,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settings.extendedSourceContextDepth = settingsComponent!!.extendedSourceContextDepth
         settings.assistantActionsEnabled = settingsComponent!!.assistantActionsEnabled
         settings.syntaxAutocorrectionEnabled = settingsComponent!!.syntaxAutocorrectionEnabled
+        settings.endpoint = settingsComponent!!.endpoint
     }
 
     override fun reset() {
@@ -67,5 +69,6 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settingsComponent!!.extendedSourceContextDepth = settings.extendedSourceContextDepth
         settingsComponent!!.assistantActionsEnabled = settings.assistantActionsEnabled
         settingsComponent!!.syntaxAutocorrectionEnabled = settings.syntaxAutocorrectionEnabled
+        settingsComponent!!.endpoint = settings.endpoint
     }
 }

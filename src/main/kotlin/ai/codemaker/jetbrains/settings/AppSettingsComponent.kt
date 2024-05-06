@@ -32,6 +32,7 @@ class AppSettingsComponent(project: Project) {
     private val extendedSourceContextDepthCombo = ComboBox(arrayOf(1, 2, 3))
     private val assistantActionsEnabledCheck = JBCheckBox()
     private val syntaxAutocorrectionEnabledCheck = JBCheckBox()
+    private val endpointText = JBTextField()
 
     init {
         val createAccountLabel = ActionLink("Create account for free.") {
@@ -69,6 +70,8 @@ class AppSettingsComponent(project: Project) {
                 .addLabeledComponent(JBLabel("Enable assistant contextual operations: "), assistantActionsEnabledCheck, 1, false)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("Enable syntax autocorrection: "), syntaxAutocorrectionEnabledCheck, 1, false)
+                .addSeparator()
+                .addLabeledComponent(JBLabel("Endpoint: "), endpointText, 1, false)
                 .addComponentFillVertically(JPanel(), 0)
                 .panel
     }
@@ -151,5 +154,11 @@ class AppSettingsComponent(project: Project) {
         get() = syntaxAutocorrectionEnabledCheck.isSelected
         set(enabled) {
             syntaxAutocorrectionEnabledCheck.isSelected = enabled
+        }
+
+    var endpoint: String?
+        get() = endpointText.text.trim()
+        set(endpoint) {
+            endpointText.text = endpoint
         }
 }

@@ -45,6 +45,9 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState> {
     @JvmField
     var syntaxAutocorrectionEnabled: Boolean = false
 
+    @JvmField
+    var endpoint: String? = null
+
     override fun getState(): AppSettingsState {
         return this
     }
