@@ -14,6 +14,8 @@ public class Config {
 
     private static final int DEFAULT_MINIMUM_COMPRESSION_PAYLOAD_SIZE = 2048;
 
+    private static final int DEFAULT_MAX_RETRIES = 5;
+
     private final String endpoint;
 
     private final int port;
@@ -22,11 +24,14 @@ public class Config {
 
     private final int minimumCompressionPayloadSize;
 
+    private final int maxRetries;
+
     private Config(Builder builder) {
         this.endpoint = builder.endpoint;
         this.port = builder.port;
         this.enableCompression = builder.enableCompression;
         this.minimumCompressionPayloadSize = builder.minimumCompressionPayloadSize;
+        this.maxRetries = builder.maxRetries;
     }
 
     public static Config create() {
@@ -53,6 +58,10 @@ public class Config {
         return minimumCompressionPayloadSize;
     }
 
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
     public static class Builder {
 
         private String endpoint = DEFAULT_ENDPOINT;
@@ -62,6 +71,8 @@ public class Config {
         private boolean enableCompression = DEFAULT_ENABLE_COMPRESSION;
 
         private int minimumCompressionPayloadSize = DEFAULT_MINIMUM_COMPRESSION_PAYLOAD_SIZE;
+
+        private int maxRetries = DEFAULT_MAX_RETRIES;
 
         public Builder withEndpoint(String endpoint) {
             this.endpoint = endpoint;

@@ -52,6 +52,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -169,111 +170,61 @@ public final class DefaultClient implements Client {
     }
 
     private Codemakerai.DiscoverSourceContextResponse doDiscoverContext(Codemakerai.DiscoverSourceContextRequest request) {
-        try {
-            return client().discoverContext(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::discoverContext, request);
     }
 
     private Codemakerai.CreateSourceContextResponse doCreateContext(Codemakerai.CreateSourceContextRequest request) {
-        try {
-            return client().createContext(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::createContext, request);
     }
 
     private Codemakerai.RegisterSourceContextResponse doRegisterContext(Codemakerai.RegisterSourceContextRequest request) {
-        try {
-            return client().registerContext(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::registerContext, request);
     }
 
     private Codemakerai.AssistantCompletionResponse doAssistantCompletion(Codemakerai.AssistantCompletionRequest request) {
-        try {
-            return client().assistantCompletion(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::assistantCompletion, request);
     }
 
     private Codemakerai.AssistantCodeCompletionResponse doAssistantCodeCompletion(Codemakerai.AssistantCodeCompletionRequest request) {
-        try {
-            return client().assistantCodeCompletion(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::assistantCodeCompletion, request);
     }
 
     private Codemakerai.CompletionResponse doCompletion(Codemakerai.CompletionRequest request) {
-        try {
-            return client().completion(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::completion, request);
     }
 
     private Codemakerai.ProcessResponse doProcess(Codemakerai.ProcessRequest request) {
-        try {
-            return client().process(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::process, request);
     }
 
     private Codemakerai.PredictResponse doPredict(Codemakerai.PredictRequest request) {
-        try {
-            return client().predict(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
-            }
-            throw e;
-        }
+        return doCall(client::predict, request);
     }
 
     private Codemakerai.ListModelsResponse doListModels(Codemakerai.ListModelsRequest request) {
-        try {
-            return client().listModels(request);
-        } catch (StatusRuntimeException e) {
-            logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
-            if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
-                throw new UnauthorizedException("Unauthorized request.");
+        return doCall(client::listModels, request);
+    }
+
+    private <TResp, TReq> TResp doCall(Function<TReq, TResp> operation, TReq request) {
+        Exception exception;
+        int retry = 0;
+
+        do {
+            try {
+                return operation.apply(request);
+            } catch (StatusRuntimeException e) {
+                logger.error("Error calling service {} {}", e.getStatus().getCode(), e.getStatus().getDescription(), e);
+                if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
+                    throw new UnauthorizedException("Unauthorized request.");
+                } else if (e.getStatus().getCode() == Status.Code.DEADLINE_EXCEEDED) {
+                    exception = new ClientException("Operation Timeout");
+                } else {
+                    throw new ClientException("Error invoking CodeMaker AI API", e);
+                }
             }
-            throw e;
-        }
+        } while(++retry < config.getMaxRetries());
+
+        throw new ClientException("Error invoking CodeMaker AI API.", exception);
     }
 
     private CodemakerServiceGrpc.CodemakerServiceBlockingStub client() {
