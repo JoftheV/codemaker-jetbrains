@@ -217,7 +217,7 @@ public final class DefaultClient implements Client {
                 if (e.getStatus().getCode() == Status.Code.PERMISSION_DENIED) {
                     throw new UnauthorizedException("Unauthorized request.");
                 } else if (e.getStatus().getCode() == Status.Code.DEADLINE_EXCEEDED) {
-                    exception = new ClientException("Operation Timeout");
+                    exception = new ClientException("Operation Timeout", e);
                 } else {
                     throw new ClientException("Error invoking CodeMaker AI API", e);
                 }
