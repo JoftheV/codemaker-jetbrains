@@ -16,32 +16,31 @@ import com.intellij.openapi.editor.event.*
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
 import java.util.*
-import kotlin.collections.HashSet
 
 class CodemakerEditorFactoryListener : EditorFactoryListener {
 
-    private val codemakerCaretListener by lazy { CodemakerCaretListener() }
-    private val codemakerDocumentListener by lazy { CodemakerDocumentListener() }
+    private val caretListener by lazy { CodemakerCaretListener() }
+    private val documentListener by lazy { CodemakerDocumentListener() }
 
-    private val editors = Collections.newSetFromMap(IdentityHashMap<Editor, Boolean>())
+    private val files = Collections.newSetFromMap(IdentityHashMap<String, Boolean>())
 
     override fun editorCreated(event: EditorFactoryEvent) {
-        if (!editors.contains(event.editor)) {
+        if (event.editor.virtualFile != null && !files.contains(event.editor.virtualFile.path)) {
             event.editor.apply {
-                document.addDocumentListener(codemakerDocumentListener)
-                caretModel.addCaretListener(codemakerCaretListener)
+                document.addDocumentListener(documentListener)
+                caretModel.addCaretListener(caretListener)
             }
-            editors.add(event.editor)
+            files.add(event.editor.virtualFile.path)
         }
     }
 
     override fun editorReleased(event: EditorFactoryEvent) {
-        if (editors.contains(event.editor)) {
+        if (event.editor.virtualFile != null && files.contains(event.editor.virtualFile.path)) {
             event.editor.apply {
-                caretModel.removeCaretListener(codemakerCaretListener)
-                document.removeDocumentListener(codemakerDocumentListener)
+                caretModel.removeCaretListener(caretListener)
+                document.removeDocumentListener(documentListener)
             }
-            editors.remove(event.editor)
+            files.remove(event.editor.virtualFile.path)
         }
     }
 
