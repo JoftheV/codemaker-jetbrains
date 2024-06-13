@@ -87,7 +87,7 @@ class CodeMakerService(private val project: Project) {
 
             val contextId = registerContext(client, language!!, source, path.path)
 
-            val response = client.assistantCodeCompletion(createAssistantCodeCompletionRequest(message, language!!, source, contextId, model))
+            val response = client.assistantCodeCompletion(createAssistantCodeCompletionRequest(message, language, source, contextId, model))
 
             if (response.output.source.isNotEmpty()) {
                 writeFile(path, response.output.source)
@@ -114,7 +114,7 @@ class CodeMakerService(private val project: Project) {
 
             val contextId = registerContext(client, language!!, source, path.path)
 
-            val response = client.completion(createCompletionRequest(language!!, source, offset, isMultilineAutocompletion, contextId, model))
+            val response = client.completion(createCompletionRequest(language, source, offset, isMultilineAutocompletion, contextId, model))
 
             return response.output.source;
         } catch (e: ProcessCanceledException) {
@@ -256,7 +256,7 @@ class CodeMakerService(private val project: Project) {
 
             val contextId = registerContext(client, language!!, source, file.path)
 
-            predictiveProcess(client, language!!, source, contextId, model)
+            predictiveProcess(client, language, source, contextId, model)
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: UnauthorizedException) {
@@ -276,7 +276,7 @@ class CodeMakerService(private val project: Project) {
 
             val contextId = registerContext(client, mode, language!!, source, file.path)
 
-            val output = process(client, mode, language!!, source, modify, codePath, prompt, contextId, model)
+            val output = process(client, mode, language, source, modify, codePath, prompt, contextId, model)
 
             writeFile(file, output)
         } catch (e: ProcessCanceledException) {
@@ -308,7 +308,7 @@ class CodeMakerService(private val project: Project) {
             }
 
             val contextId = registerContext(client, mode, language!!, source, file.path)
-            val output = process(client, mode, language!!, source, Modify.NONE, null, null, contextId, model)
+            val output = process(client, mode, language, source, Modify.NONE, null, null, contextId, model)
             writeFile(file, output)
         } catch (e: ProcessCanceledException) {
             throw e
