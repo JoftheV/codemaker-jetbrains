@@ -19,17 +19,17 @@ configurations.all {
 }
 
 dependencies {
-    implementation("io.grpc:grpc-protobuf:1.59.0")
-    implementation("io.grpc:grpc-services:1.59.0")
-    implementation("io.grpc:grpc-stub:1.59.0")
+    implementation("io.grpc:grpc-protobuf:1.64.0")
+    implementation("io.grpc:grpc-services:1.64.0")
+    implementation("io.grpc:grpc-stub:1.64.0")
 
-    implementation("com.google.protobuf:protobuf-java-util:3.24.0")
-    implementation("com.google.protobuf:protobuf-java:3.24.0")
+    implementation("com.google.protobuf:protobuf-java-util:4.27.0")
+    implementation("com.google.protobuf:protobuf-java:4.27.0")
 
-    runtimeOnly("io.grpc:grpc-netty-shaded:1.59.0")
+    runtimeOnly("io.grpc:grpc-netty-shaded:1.64.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
 }
 
 tasks {
@@ -75,11 +75,11 @@ tasks {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.24.0"
+        artifact = "com.google.protobuf:protoc:4.27.0"
     }
     plugins {
         id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.64.0"
         }
     }
     generateProtoTasks {
