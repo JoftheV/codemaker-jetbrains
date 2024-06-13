@@ -7,6 +7,7 @@ package ai.codemaker.jetbrains.action
 import ai.codemaker.jetbrains.dialog.DocumentationDialog
 import ai.codemaker.jetbrains.service.CodeMakerService
 import ai.codemaker.sdkv2.client.model.Modify
+import ai.codemaker.sdkv2.client.model.Visibility
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiDocumentManager
@@ -27,7 +28,7 @@ class CustomizeDocumentationAction : BaseAction() {
         e: AnActionEvent,
         overrideIndent: Int?,
         minimalLinesLength: Int?,
-        visibility: String?
+        visibility: Visibility?
     ) {
         val project = e.getData(CommonDataKeys.PROJECT) ?: return
 

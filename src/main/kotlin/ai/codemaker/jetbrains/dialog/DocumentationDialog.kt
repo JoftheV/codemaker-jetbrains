@@ -4,6 +4,7 @@
 
 package ai.codemaker.jetbrains.dialog
 
+import ai.codemaker.sdkv2.client.model.Visibility
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import java.awt.Dimension
@@ -13,9 +14,11 @@ import javax.swing.*
 
 class DocumentationDialog : DialogWrapper(true) {
 
+    private val visibilityLabels = mapOf("All" to Visibility.ALL, "Public" to Visibility.PUBLIC)
+
     private val overrideIndent = JSpinner(SpinnerNumberModel(4, 1, 20, 1))
     private val minimalLinesLength = JSpinner(SpinnerNumberModel(0, 0, 1000, 1))
-    private val visibility = ComboBox(arrayOf("All", "Public"))
+    private val visibility = ComboBox(visibilityLabels.keys.toTypedArray())
 
     init {
         title = "Customize Documentation"
@@ -30,8 +33,8 @@ class DocumentationDialog : DialogWrapper(true) {
         return minimalLinesLength.value as Int
     }
 
-    fun getVisibility(): String {
-        return visibility.selectedItem as String
+    fun getVisibility(): Visibility? {
+        return visibilityLabels[visibility.selectedItem as String]
     }
 
     override fun createCenterPanel(): JComponent? {

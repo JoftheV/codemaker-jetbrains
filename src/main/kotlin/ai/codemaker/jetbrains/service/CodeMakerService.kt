@@ -65,7 +65,7 @@ class CodeMakerService(private val project: Project) {
         process(Mode.EDIT_CODE, "Editing code", path, modify, codePath, prompt)
     }
 
-    fun generateDocumentation(path: VirtualFile?, modify: Modify, codePath: String? = null, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: String? = null) {
+    fun generateDocumentation(path: VirtualFile?, modify: Modify, codePath: String? = null, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: Visibility? = null) {
         process(Mode.DOCUMENT, "Generating documentation", path, modify, codePath, null, overrideIndent, minimalLinesLength, visibility)
     }
 
@@ -159,7 +159,7 @@ class CodeMakerService(private val project: Project) {
         return resp.models
     }
 
-    private fun process(mode: Mode, title: String, path: VirtualFile?, modify: Modify, codePath: String?, prompt: String? = null, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: String? = null) {
+    private fun process(mode: Mode, title: String, path: VirtualFile?, modify: Modify, codePath: String?, prompt: String? = null, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: Visibility? = null) {
         runInBackground(title) {
             try {
                 walkFiles(path) { file: VirtualFile ->
@@ -225,7 +225,7 @@ class CodeMakerService(private val project: Project) {
     }
 
     @Throws(InterruptedException::class)
-    private fun process(client: Client, mode: Mode, language: Language, source: String, modify: Modify, codePath: String?, prompt: String?, contextId: String?, model: String?, overrideIndent: Int?, minimalLinesLength: Int?, visibility: String?): String {
+    private fun process(client: Client, mode: Mode, language: Language, source: String, modify: Modify, codePath: String?, prompt: String?, contextId: String?, model: String?, overrideIndent: Int?, minimalLinesLength: Int?, visibility: Visibility?): String {
         val response = client.process(createProcessRequest(mode, language, source, modify, codePath, prompt, contextId, model, overrideIndent, minimalLinesLength, visibility))
         return response.output.source
     }
@@ -267,7 +267,7 @@ class CodeMakerService(private val project: Project) {
         }
     }
 
-    private fun processFile(client: Client, file: VirtualFile, mode: Mode, modify: Modify, codePath: String? = null, prompt: String? = null, overrideIndent: Int? = null, minimalLinesLength: Int?, visibility: String?) {
+    private fun processFile(client: Client, file: VirtualFile, mode: Mode, modify: Modify, codePath: String? = null, prompt: String? = null, overrideIndent: Int? = null, minimalLinesLength: Int?, visibility: Visibility?) {
         try {
             val model = AppSettingsState.instance.model
 
@@ -425,7 +425,7 @@ class CodeMakerService(private val project: Project) {
         }
     }
 
-    private fun createProcessRequest(mode: Mode, language: Language, source: String, modify: Modify, codePath: String? = null, prompt: String? = null, contextId: String? = null, model: String ? = null, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: String? = null): ProcessRequest {
+    private fun createProcessRequest(mode: Mode, language: Language, source: String, modify: Modify, codePath: String? = null, prompt: String? = null, contextId: String? = null, model: String ? = null, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: Visibility? = null): ProcessRequest {
         return ProcessRequest(
                 mode,
                 language,

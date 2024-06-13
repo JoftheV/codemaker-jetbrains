@@ -30,6 +30,7 @@ import ai.codemaker.sdkv2.client.model.ProcessResponse;
 import ai.codemaker.sdkv2.client.model.RegisterContextRequest;
 import ai.codemaker.sdkv2.client.model.RegisterContextResponse;
 import ai.codemaker.sdkv2.client.model.RequiredContext;
+import ai.codemaker.sdkv2.client.model.Visibility;
 import ai.codemaker.service.CodemakerServiceGrpc;
 import ai.codemaker.service.Codemakerai;
 import com.google.common.hash.Hashing;
@@ -420,7 +421,7 @@ public final class DefaultClient implements Client {
         final Optional<String> model = Optional.ofNullable(options.getModel());
         final Optional<Integer> overrideIndent = Optional.ofNullable(options.getOverrideIndent());
         final Optional<Integer> minimalLinesLength = Optional.ofNullable(options.getMinimalLinesLength());
-        final Optional<String> visibility = Optional.ofNullable(options.getVisibility());
+        final Optional<Visibility> visibility = Optional.ofNullable(options.getVisibility());
 
         modify.ifPresent(value -> builder.setModify(mapModify(value)));
         codePath.ifPresent(builder::setCodePath);
@@ -429,6 +430,7 @@ public final class DefaultClient implements Client {
         model.ifPresent(builder::setModel);
         overrideIndent.ifPresent(builder::setOverrideIndent);
         minimalLinesLength.ifPresent(builder::setMinimalLineLength);
+        visibility.ifPresent(value -> builder.setVisibility(mapVisibility(value)));
 
         builder.setDetectSyntaxErrors(options.isDetectSyntaxErrors());
 
@@ -522,6 +524,13 @@ public final class DefaultClient implements Client {
         return switch (modify) {
             case NONE -> Codemakerai.Modify.UNMODIFIED;
             case REPLACE -> Codemakerai.Modify.REPLACE;
+        };
+    }
+
+    private static Codemakerai.Visibility mapVisibility(Visibility visibility) {
+        return switch (visibility) {
+            case ALL -> Codemakerai.Visibility.ALL;
+            case PUBLIC -> Codemakerai.Visibility.PUBLIC;
         };
     }
 

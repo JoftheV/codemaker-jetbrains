@@ -23,7 +23,7 @@ public class Options {
 
     private final Integer minimalLinesLength;
 
-    private final String visibility;
+    private final Visibility visibility;
 
     public Options(
             Modify modify,
@@ -35,7 +35,7 @@ public class Options {
             String model,
             Integer overrideIndent,
             Integer minimalLinesLength,
-            String visibility) {
+            Visibility visibility) {
         this.modify = modify;
         this.codePath = codePath;
         this.prompt = prompt;
@@ -84,7 +84,7 @@ public class Options {
         return minimalLinesLength;
     }
 
-    public String getVisibility() {
+    public Visibility getVisibility() {
         return visibility;
     }
 }
