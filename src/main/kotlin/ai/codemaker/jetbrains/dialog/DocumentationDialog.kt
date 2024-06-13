@@ -14,7 +14,7 @@ import javax.swing.*
 class DocumentationDialog : DialogWrapper(true) {
 
     private val overrideIndent = JSpinner(SpinnerNumberModel(4, 1, 20, 1))
-    private val minimalLineLength = JSpinner(SpinnerNumberModel(0, 0, 1000, 1))
+    private val minimalLinesLength = JSpinner(SpinnerNumberModel(0, 0, 1000, 1))
     private val visibility = ComboBox(arrayOf("All", "Public"))
 
     init {
@@ -26,8 +26,8 @@ class DocumentationDialog : DialogWrapper(true) {
         return overrideIndent.value as Int
     }
 
-    fun getMinimalLineLength(): Int {
-        return minimalLineLength.value as Int
+    fun getMinimalLinesLength(): Int {
+        return minimalLinesLength.value as Int
     }
 
     fun getVisibility(): String {
@@ -36,13 +36,13 @@ class DocumentationDialog : DialogWrapper(true) {
 
     override fun createCenterPanel(): JComponent? {
         val dialogPanel = JPanel(GridLayout(3, 2))
-        dialogPanel.preferredSize = Dimension(300, 200)
+        dialogPanel.preferredSize = Dimension(200, 100)
 
         dialogPanel.add(JLabel("Override indent: "))
         dialogPanel.add(overrideIndent)
 
-        dialogPanel.add(JLabel("Minimal line complexity: "))
-        dialogPanel.add(minimalLineLength)
+        dialogPanel.add(JLabel("Minimal lines complexity: "))
+        dialogPanel.add(minimalLinesLength)
 
         dialogPanel.add(JLabel("Member visibility: "))
         dialogPanel.add(visibility)

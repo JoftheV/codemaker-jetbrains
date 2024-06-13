@@ -12,21 +12,21 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiDocumentManager
 
 class CustomizeDocumentationAction : BaseAction() {
-    
+
     override fun actionPerformed(e: AnActionEvent) {
         val dialog = DocumentationDialog()
         if (dialog.showAndGet()) {
             val overrideIndent = dialog.getOverrideIndent()
-            val minimalLineLength = dialog.getMinimalLineLength()
+            val minimalLinesLength = dialog.getMinimalLinesLength()
             val visibility = dialog.getVisibility()
-            generateDocumentation(e, overrideIndent, minimalLineLength, visibility)
+            generateDocumentation(e, overrideIndent, minimalLinesLength, visibility)
         }
     }
 
     private fun generateDocumentation(
         e: AnActionEvent,
         overrideIndent: Int?,
-        minimalLineLength: Int?,
+        minimalLinesLength: Int?,
         visibility: String?
     ) {
         val project = e.getData(CommonDataKeys.PROJECT) ?: return
@@ -43,12 +43,12 @@ class CustomizeDocumentationAction : BaseAction() {
                 Modify.NONE,
                 null,
                 overrideIndent,
-                minimalLineLength,
+                minimalLinesLength,
                 visibility
             )
         } else {
             val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-            service.generateDocumentation(file, Modify.NONE, null, overrideIndent, minimalLineLength, visibility)
+            service.generateDocumentation(file, Modify.NONE, null, overrideIndent, minimalLinesLength, visibility)
         }
     }
 }

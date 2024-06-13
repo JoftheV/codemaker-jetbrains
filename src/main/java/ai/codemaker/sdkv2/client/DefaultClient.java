@@ -418,12 +418,17 @@ public final class DefaultClient implements Client {
         final Optional<String> prompt = Optional.ofNullable(options.getPrompt());
         final Optional<String> contextId = Optional.ofNullable(options.getContextId());
         final Optional<String> model = Optional.ofNullable(options.getModel());
+        final Optional<Integer> overrideIndent = Optional.ofNullable(options.getOverrideIndent());
+        final Optional<Integer> minimalLinesLength = Optional.ofNullable(options.getMinimalLinesLength());
+        final Optional<String> visibility = Optional.ofNullable(options.getVisibility());
 
         modify.ifPresent(value -> builder.setModify(mapModify(value)));
         codePath.ifPresent(builder::setCodePath);
         prompt.ifPresent(builder::setPrompt);
         contextId.ifPresent(builder::setContextId);
         model.ifPresent(builder::setModel);
+        overrideIndent.ifPresent(builder::setOverrideIndent);
+        minimalLinesLength.ifPresent(builder::setMinimalLineLength);
 
         builder.setDetectSyntaxErrors(options.isDetectSyntaxErrors());
 

@@ -21,7 +21,7 @@ public class Options {
 
     private final Integer overrideIndent;
 
-    private final Integer minimalLineLength;
+    private final Integer minimalLinesLength;
 
     private final String visibility;
 
@@ -34,7 +34,7 @@ public class Options {
             String contextId,
             String model,
             Integer overrideIndent,
-            Integer minimalLineLength,
+            Integer minimalLinesLength,
             String visibility) {
         this.modify = modify;
         this.codePath = codePath;
@@ -44,7 +44,7 @@ public class Options {
         this.contextId = contextId;
         this.model = model;
         this.overrideIndent = overrideIndent;
-        this.minimalLineLength = minimalLineLength;
+        this.minimalLinesLength = minimalLinesLength;
         this.visibility = visibility;
     }
 
@@ -74,5 +74,17 @@ public class Options {
 
     public String getModel() {
         return model;
+    }
+
+    public Integer getOverrideIndent() {
+        return overrideIndent;
+    }
+
+    public Integer getMinimalLinesLength() {
+        return minimalLinesLength;
+    }
+
+    public String getVisibility() {
+        return visibility;
     }
 }
