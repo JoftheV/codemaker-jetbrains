@@ -12,6 +12,8 @@ import com.jetbrains.rd.util.AtomicReference
 
 class ClientManager {
 
+    private val defaultMaxRetries = 10
+
     private val client = AtomicReference<Holder?>(null)
 
     class Holder(val endpoint: String?, val client: Client) {
@@ -28,11 +30,11 @@ class ClientManager {
     }
 
     private fun createClient(endpoint: String?): Client {
-        val config = if (!endpoint.isNullOrEmpty()) {
-            Config.builder().withEndpoint(endpoint).build()
-        } else {
-            Config.create()
+        val builder = Config.builder()
+        if (!endpoint.isNullOrEmpty()) {
+            builder.withEndpoint(endpoint)
         }
-        return DefaultClient({ AppSettingsState.instance.apiKey }, config)
+        builder.withMaxRetries(defaultMaxRetries)
+        return DefaultClient({ AppSettingsState.instance.apiKey }, builder.build())
     }
 }

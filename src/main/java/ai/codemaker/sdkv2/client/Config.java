@@ -94,6 +94,11 @@ public class Config {
             return this;
         }
 
+        public Builder withMaxRetries(int maxRetries) {
+            this.maxRetries = maxRetries;
+            return this;
+        }
+
         public Config build() {
             return new Config(this);
         }
