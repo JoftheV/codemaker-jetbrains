@@ -19,7 +19,23 @@ public class Options {
 
     private final String model;
 
-    public Options(Modify modify, String codePath, String prompt, boolean detectSyntaxErrors, boolean allowMultiLineAutocomplete, String contextId, String model) {
+    private final Integer overrideIndent;
+
+    private final Integer minimalLineLength;
+
+    private final String visibility;
+
+    public Options(
+            Modify modify,
+            String codePath,
+            String prompt,
+            boolean detectSyntaxErrors,
+            boolean allowMultiLineAutocomplete,
+            String contextId,
+            String model,
+            Integer overrideIndent,
+            Integer minimalLineLength,
+            String visibility) {
         this.modify = modify;
         this.codePath = codePath;
         this.prompt = prompt;
@@ -27,6 +43,9 @@ public class Options {
         this.allowMultiLineAutocomplete = allowMultiLineAutocomplete;
         this.contextId = contextId;
         this.model = model;
+        this.overrideIndent = overrideIndent;
+        this.minimalLineLength = minimalLineLength;
+        this.visibility = visibility;
     }
 
     public Modify getModify() {

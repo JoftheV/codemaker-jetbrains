@@ -10,17 +10,25 @@ import ai.codemaker.sdkv2.client.model.Modify
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFile
 
 class CustomizeDocumentationAction : BaseAction() {
+    
     override fun actionPerformed(e: AnActionEvent) {
         val dialog = DocumentationDialog()
         if (dialog.showAndGet()) {
-            generateDocumentation(e)
+            val overrideIndent = dialog.getOverrideIndent()
+            val minimalLineLength = dialog.getMinimalLineLength()
+            val visibility = dialog.getVisibility()
+            generateDocumentation(e, overrideIndent, minimalLineLength, visibility)
         }
     }
 
-    private fun generateDocumentation(e: AnActionEvent) {
+    private fun generateDocumentation(
+        e: AnActionEvent,
+        overrideIndent: Int?,
+        minimalLineLength: Int?,
+        visibility: String?
+    ) {
         val project = e.getData(CommonDataKeys.PROJECT) ?: return
 
         val service: CodeMakerService = project.getService(CodeMakerService::class.java)
@@ -29,16 +37,18 @@ class CustomizeDocumentationAction : BaseAction() {
         if (editor != null) {
             val documentManager = PsiDocumentManager.getInstance(project)
             val psiFile = documentManager.getPsiFile(editor.document) ?: return
-            val codePath = getCodePath(psiFile, editor.caretModel.offset)
             documentManager.commitDocument(editor.document)
-            service.generateDocumentation(psiFile.virtualFile, Modify.NONE, codePath)
+            service.generateDocumentation(
+                psiFile.virtualFile,
+                Modify.NONE,
+                null,
+                overrideIndent,
+                minimalLineLength,
+                visibility
+            )
         } else {
             val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-            service.generateDocumentation(file, Modify.NONE)
+            service.generateDocumentation(file, Modify.NONE, null, overrideIndent, minimalLineLength, visibility)
         }
-    }
-
-    open fun getCodePath(psiFile: PsiFile, offset: Int): String? {
-        return null
     }
 }

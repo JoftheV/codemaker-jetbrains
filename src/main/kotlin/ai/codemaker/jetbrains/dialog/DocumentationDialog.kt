@@ -8,36 +8,44 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import java.awt.Dimension
 import java.awt.GridLayout
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JSpinner
-import javax.swing.SpinnerNumberModel
+import javax.swing.*
 
 
 class DocumentationDialog : DialogWrapper(true) {
 
-    val indentation = JSpinner(SpinnerNumberModel(4, 1, 20, 1))
-    val minimalComplexity = JSpinner(SpinnerNumberModel(0, 0, 1000, 1))
-    val members = ComboBox(arrayOf("All", "Public"))
+    private val overrideIndent = JSpinner(SpinnerNumberModel(4, 1, 20, 1))
+    private val minimalLineLength = JSpinner(SpinnerNumberModel(0, 0, 1000, 1))
+    private val visibility = ComboBox(arrayOf("All", "Public"))
 
     init {
         title = "Customize Documentation"
         super.init()
     }
 
+    fun getOverrideIndent(): Int {
+        return overrideIndent.value as Int
+    }
+
+    fun getMinimalLineLength(): Int {
+        return minimalLineLength.value as Int
+    }
+
+    fun getVisibility(): String {
+        return visibility.selectedItem as String
+    }
+
     override fun createCenterPanel(): JComponent? {
         val dialogPanel = JPanel(GridLayout(3, 2))
-        dialogPanel.preferredSize = Dimension(200, 100)
+        dialogPanel.preferredSize = Dimension(300, 200)
 
-        dialogPanel.add(JLabel("Override Indent: "))
-        dialogPanel.add(indentation)
+        dialogPanel.add(JLabel("Override indent: "))
+        dialogPanel.add(overrideIndent)
 
         dialogPanel.add(JLabel("Minimal line complexity: "))
-        dialogPanel.add(minimalComplexity)
+        dialogPanel.add(minimalLineLength)
 
-        dialogPanel.add(JLabel("Match members: "))
-        dialogPanel.add(members)
+        dialogPanel.add(JLabel("Member visibility: "))
+        dialogPanel.add(visibility)
 
         return dialogPanel
     }
