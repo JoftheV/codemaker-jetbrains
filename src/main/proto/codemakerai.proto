@@ -112,7 +112,7 @@ message ProcessOptions {
   string contextId = 5;
   string model = 6;
   int32 overrideIndent = 7;
-  int32 minimalLineLength = 8;
+  int32 minimalLinesLength = 8;
   Visibility visibility = 9;
 }
 

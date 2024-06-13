@@ -429,7 +429,7 @@ public final class DefaultClient implements Client {
         contextId.ifPresent(builder::setContextId);
         model.ifPresent(builder::setModel);
         overrideIndent.ifPresent(builder::setOverrideIndent);
-        minimalLinesLength.ifPresent(builder::setMinimalLineLength);
+        minimalLinesLength.ifPresent(builder::setMinimalLinesLength);
         visibility.ifPresent(value -> builder.setVisibility(mapVisibility(value)));
 
         builder.setDetectSyntaxErrors(options.isDetectSyntaxErrors());
