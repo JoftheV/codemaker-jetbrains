@@ -2,7 +2,7 @@ import com.google.protobuf.gradle.*
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    id("org.jetbrains.kotlin.jvm") version "1.9.23"
     id("org.jetbrains.intellij") version "1.17.3"
     id("com.google.protobuf") version "0.9.4"
 }
