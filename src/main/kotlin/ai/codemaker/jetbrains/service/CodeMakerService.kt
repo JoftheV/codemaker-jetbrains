@@ -3,6 +3,7 @@
  */
 package ai.codemaker.jetbrains.service
 
+import ai.codemaker.jetbrains.client.ClientManager
 import ai.codemaker.jetbrains.file.FileExtensions
 import ai.codemaker.jetbrains.settings.AppSettingsState
 import ai.codemaker.jetbrains.settings.AppSettingsState.Companion.instance
@@ -41,9 +42,12 @@ class CodeMakerService(private val project: Project) {
 
     private val logger = Logger.getInstance(CodeMakerService::class.java)
 
-    private val client: Client = DefaultClient {
-        instance.apiKey
-    }
+    private val clientManager = ClientManager()
+
+    private val client: Client
+        get() {
+            return clientManager.getClient(instance.endpoint)
+        }
 
     fun generateCode(path: VirtualFile?, modify: Modify, codePath: String? = null) {
         process(Mode.CODE, "Generating code", path, modify, codePath)

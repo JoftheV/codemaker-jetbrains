@@ -52,6 +52,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -66,9 +67,13 @@ public final class DefaultClient implements Client {
 
     private static final int DEFAULT_TIMEOUT_IN_MILLIS = 120000;
 
+    private final ManagedChannel channel;
+
     private final CodemakerServiceGrpc.CodemakerServiceBlockingStub client;
 
     private final Config config;
+
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
 
     public DefaultClient(ApiKeyProvider apiKeyProvider) {
         this(apiKeyProvider, Config.create());
@@ -80,9 +85,10 @@ public final class DefaultClient implements Client {
 
         this.config = config;
 
+        this.channel = createChannel(config);
         this.client = CodemakerServiceGrpc.newBlockingStub(
                 ClientInterceptors.intercept(
-                        createChannel(config),
+                        channel,
                         new AuthenticationInterceptor(apiKeyProvider)
                 )
         );
@@ -167,6 +173,13 @@ public final class DefaultClient implements Client {
         final Codemakerai.ListModelsResponse listModelsResponse = doListModels(listModelsRequest);
 
         return createListModelsResponse(listModelsResponse);
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (isShutdown.compareAndSet(false, true)) {
+            this.channel.shutdown();
+        }
     }
 
     private Codemakerai.DiscoverSourceContextResponse doDiscoverContext(Codemakerai.DiscoverSourceContextRequest request) {

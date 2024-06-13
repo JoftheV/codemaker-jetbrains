@@ -23,7 +23,7 @@ import ai.codemaker.sdkv2.client.model.ProcessResponse;
 import ai.codemaker.sdkv2.client.model.RegisterContextRequest;
 import ai.codemaker.sdkv2.client.model.RegisterContextResponse;
 
-public interface Client {
+public interface Client extends AutoCloseable {
 
     AssistantCompletionResponse assistantCompletion(AssistantCompletionRequest request);
 
