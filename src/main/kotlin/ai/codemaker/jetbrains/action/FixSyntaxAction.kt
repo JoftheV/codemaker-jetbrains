@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 
-class FixSyntaxAction : AnAction() {
+class FixSyntaxAction : BaseAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT) ?: return
