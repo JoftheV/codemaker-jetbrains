@@ -59,6 +59,11 @@ enum Modify {
   REPLACE = 1;
 }
 
+enum Visibility {
+  ALL = 0;
+  PUBLIC = 1;
+}
+
 message Source {
   bytes content = 1;
   Encoding encoding = 2;
@@ -106,6 +111,9 @@ message ProcessOptions {
   bool detectSyntaxErrors = 4;
   string contextId = 5;
   string model = 6;
+  int32 overrideIndent = 7;
+  int32 minimalLineLength = 8;
+  Visibility visibility = 9;
 }
 
 message CompletionOptions {
