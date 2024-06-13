@@ -100,6 +100,11 @@
                     description="Generates documentation">
                 <keyboard-shortcut keymap="$default" first-keystroke="alt ctrl G" second-keystroke="D"/>
             </action>
+            <action id="ai.codemaker.jetbrains.CustomizeDocumentationAction"
+                    class="ai.codemaker.jetbrains.action.CustomizeDocumentationAction" text="Customize Documentation"
+                    description="Customize documentation">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt ctrl G" second-keystroke="X"/>
+            </action>
         </group>
 
         <group id="ai.codemaker.jetbrains.GenerateReplaceMenu" text="Replace" description="Generate" popup="true">
