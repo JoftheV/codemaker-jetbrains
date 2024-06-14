@@ -59,6 +59,11 @@ enum Modify {
   REPLACE = 1;
 }
 
+enum IndentationCharacter {
+  SPACE = 0;
+  TAB = 1;
+}
+
 enum Visibility {
   ALL = 0;
   PUBLIC = 1;
@@ -111,9 +116,10 @@ message ProcessOptions {
   bool detectSyntaxErrors = 4;
   string contextId = 5;
   string model = 6;
-  int32 overrideIndent = 7;
-  int32 minimalLinesLength = 8;
-  Visibility visibility = 9;
+  IndentationCharacter indentationCharacter = 7;
+  int32 overrideIndent = 8;
+  int32 minimalLinesLength = 9;
+  Visibility visibility = 10;
 }
 
 message CompletionOptions {
