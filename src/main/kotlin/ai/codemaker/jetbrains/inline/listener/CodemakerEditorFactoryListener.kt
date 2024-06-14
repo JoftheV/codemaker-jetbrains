@@ -16,9 +16,13 @@ import com.intellij.openapi.editor.event.*
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
 import java.util.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.collections.HashSet
 
 class CodemakerEditorFactoryListener : EditorFactoryListener {
+
+    private val lock = Mutex()
 
     private val caretListener by lazy { CodemakerCaretListener() }
     private val documentListener by lazy { CodemakerDocumentListener() }
@@ -26,7 +30,7 @@ class CodemakerEditorFactoryListener : EditorFactoryListener {
     private val files = HashSet<String>()
 
     override fun editorCreated(event: EditorFactoryEvent) {
-        if (event.editor.virtualFile != null && !files.add(event.editor.virtualFile.path)) {
+        if (event.editor.virtualFile != null && files.add(event.editor.virtualFile.path)) {
             event.editor.apply {
                 document.addDocumentListener(documentListener)
                 caretModel.addCaretListener(caretListener)
