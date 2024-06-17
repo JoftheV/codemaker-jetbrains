@@ -157,6 +157,8 @@ message AssistantCompletionRequest {
 
 message AssistantCompletionResponse {
   string message = 1;
+  string sessionId = 2;
+  string messageId = 3;
 }
 
 message AssistantCodeCompletionRequest {
@@ -169,6 +171,8 @@ message AssistantCodeCompletionRequest {
 message AssistantCodeCompletionResponse {
   string message = 1;
   Output output = 2;
+  string sessionId = 3;
+  string messageId = 4;
 }
 
 message CompletionRequest {
