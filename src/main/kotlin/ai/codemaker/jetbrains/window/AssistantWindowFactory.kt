@@ -9,7 +9,6 @@ import ai.codemaker.jetbrains.assistant.Role
 import ai.codemaker.jetbrains.file.FileExtensions
 import ai.codemaker.jetbrains.service.CodeMakerService
 import ai.codemaker.jetbrains.settings.AppSettingsState
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -25,8 +24,6 @@ import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefBrowserBuilder
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
-import org.cef.browser.CefBrowser
-import org.cef.handler.CefLoadHandlerAdapter
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
@@ -42,7 +39,7 @@ import javax.swing.JTextField
 class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
     object AssistantWindowFactory {
-        const val ASSISTANT_VIEW = "/webview/assistant.html"
+        const val ASSISTANT_HOME_VIEW = "file:///assistant.html"
     }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
@@ -74,8 +71,11 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         private fun createChatPanel(): Component {
             chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
-            chatScreen.jbCefClient.addLoadHandler(LoadHandler(), chatScreen.cefBrowser)
-            chatScreen.loadHTML(assistantView())
+            chatScreen.setOpenLinksInExternalBrowser(true)
+            chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
+            val resourceHandler = FileResourceProvider()
+            resourceHandler.addResource("/") { StreamResourceHandler("webview", this) }
+            chatScreen.jbCefClient.addRequestHandler(resourceHandler, chatScreen.cefBrowser)
             return chatScreen.component
         }
 
@@ -120,8 +120,10 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
                 if (AppSettingsState.instance.apiKey.isNullOrEmpty()) {
                     addMessage(
-                            "To use Assistant features, please first set the API Key in the Extension Settings." +
-                                    "\nYou can create free account [here](https://portal.codemaker.ai/#/register).", Role.Assistant)
+                        "To use Assistant features, please first set the API Key in the Extension Settings." +
+                                "\nYou can create free account [here](https://portal.codemaker.ai/#/register).",
+                        Role.Assistant
+                    )
                     return
                 }
 
@@ -156,37 +158,10 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             chatScreen.cefBrowser.executeJavaScript("window.appendMessage(\"$content\", ${assistant})", "", 0)
         }
 
-        private fun assistantView(): String {
-            return AssistantWindowFactory::class.java
-                    .getResource(AssistantWindowFactory.ASSISTANT_VIEW)!!
-                    .readText()
-        }
-
         private fun renderMarkdown(source: String): String {
             val flavour = CommonMarkFlavourDescriptor()
             val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(source)
             return HtmlGenerator(source, parsedTree, flavour).generateHtml()
-        }
-
-        private fun registerEventHandler() {
-            chatScreen.cefBrowser.executeJavaScript(
-                    "window.openLink = function(link) { " + jsQuery.inject("link") + "};",
-                    chatScreen.cefBrowser.url, 0)
-
-            chatScreen.cefBrowser.executeJavaScript("""
-                        document.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            const link = e.target.closest('a').href;
-                            if (link) {
-                                window.openLink(link);
-                            }
-                        });
-                    """.trimIndent(), chatScreen.cefBrowser.url, 0)
-
-            jsQuery.addHandler {
-                BrowserUtil.browse(it)
-                return@addHandler null
-            }
         }
 
         inner class MessageTextKeyListener : KeyListener {
@@ -200,12 +175,6 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             }
 
             override fun keyReleased(e: KeyEvent?) {
-            }
-        }
-
-        inner class LoadHandler : CefLoadHandlerAdapter() {
-            override fun onLoadingStateChange(browser: CefBrowser?, isLoading: Boolean, canGoBack: Boolean, canGoForward: Boolean) {
-                registerEventHandler()
             }
         }
     }

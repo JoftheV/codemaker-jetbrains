@@ -71,6 +71,12 @@
             animation-delay: -0.16s;
         }
 
+        img.icon {
+            width: 12px;
+            height: 12px;
+            margin: 4px;
+        }
+
         @keyframes shine {
             0%, 80%, 100% {
                 transform: scale(0);
@@ -105,6 +111,25 @@
         message.classList.add("message");
         message.innerHTML = body;
         card.appendChild(message);
+
+        const controls = document.createElement("div");
+        controls.classList.add("controls");
+        card.append(controls);
+
+        const upVoteButton = document.createElement('img');
+        upVoteButton.classList.add('icon');
+        upVoteButton.src = "media/thumbs-up-off.svg";
+        controls.append(upVoteButton);
+
+        const downVoteButton = document.createElement('img');
+        downVoteButton.classList.add('icon');
+        downVoteButton.src = "media/thumbs-down-off.svg";
+        controls.append(downVoteButton);
+
+        const copyButton = document.createElement('img');
+        copyButton.classList.add('icon');
+        copyButton.src = "media/copy-off.svg";
+        controls.append(copyButton);
 
         document.getElementById("chat").appendChild(card);
         document.getElementById("anchor").scrollIntoView({behavior: "smooth"});
