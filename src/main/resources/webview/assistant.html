@@ -98,7 +98,7 @@
     </div>
 </div>
 <script>
-    window.appendMessage = async function (assistant, message, html) {
+    window.appendMessage = function (assistant, message, html) {
         const card = document.createElement("div");
         card.classList.add("card", assistant ? "assistant" : "user");
 

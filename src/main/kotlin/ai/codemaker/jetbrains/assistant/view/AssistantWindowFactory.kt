@@ -72,7 +72,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun createChatPanel(): Component {
-            chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
+            // chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
             chatScreen.setOpenLinksInExternalBrowser(true)
             chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
             val resourceHandler = FileResourceProvider()
@@ -155,10 +155,13 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun appendMessage(message: Message) {
-            val html = renderMarkdown(message.content).replace("\n", "\\n").replace("\"", "\\\"")
+            val content = escape(message.content)
+            val html = escape(renderMarkdown(message.content))
             val assistant = (message.role == Role.Assistant).toString()
-            chatScreen.cefBrowser.executeJavaScript("window.appendMessage(${assistant}, \"${message.content}\", \"$html\")", "", 0)
+            chatScreen.cefBrowser.executeJavaScript("window.appendMessage($assistant, \"$content\", \"$html\")", "", 0)
         }
+
+        private fun escape(input: String) = input.replace("\n", "\\n").replace("\"", "\\\"")
 
         private fun renderMarkdown(source: String): String {
             val flavour = CommonMarkFlavourDescriptor()
