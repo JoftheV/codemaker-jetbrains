@@ -2,7 +2,7 @@
  * Copyright 2023 CodeMaker AI Inc. All rights reserved.
  */
 
-package ai.codemaker.jetbrains.window
+package ai.codemaker.jetbrains.assistant.handler
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer

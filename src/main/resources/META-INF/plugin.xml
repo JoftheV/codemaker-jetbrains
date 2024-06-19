@@ -162,7 +162,7 @@
         <editorFactoryListener implementation="ai.codemaker.jetbrains.inline.listener.CodemakerEditorFactoryListener"/>
 
         <toolWindow id="CodeMaker AI" secondary="false" anchor="left" icon="CodemakerIcons.Logos.ICON"
-                    factoryClass="ai.codemaker.jetbrains.window.AssistantWindowFactory"/>
+                    factoryClass="ai.codemaker.jetbrains.assistant.view.AssistantWindowFactory"/>
     </extensions>
 
     <projectListeners>

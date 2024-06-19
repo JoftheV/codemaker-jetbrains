@@ -1,11 +1,13 @@
 /*
- * Copyright 2024 CodeMaker AI Inc. All rights reserved.
+ * Copyright 2023 CodeMaker AI Inc. All rights reserved.
  */
 
-package ai.codemaker.jetbrains.window
+package ai.codemaker.jetbrains.assistant.view
 
 import ai.codemaker.jetbrains.assistant.Message
 import ai.codemaker.jetbrains.assistant.Role
+import ai.codemaker.jetbrains.assistant.handler.FileResourceProvider
+import ai.codemaker.jetbrains.assistant.handler.StreamResourceHandler
 import ai.codemaker.jetbrains.file.FileExtensions
 import ai.codemaker.jetbrains.service.CodeMakerService
 import ai.codemaker.jetbrains.settings.AppSettingsState
@@ -153,9 +155,9 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun appendMessage(message: Message) {
-            val content = renderMarkdown(message.content).replace("\n", "\\n").replace("\"", "\\\"")
+            val html = renderMarkdown(message.content).replace("\n", "\\n").replace("\"", "\\\"")
             val assistant = (message.role == Role.Assistant).toString()
-            chatScreen.cefBrowser.executeJavaScript("window.appendMessage(\"$content\", ${assistant})", "", 0)
+            chatScreen.cefBrowser.executeJavaScript("window.appendMessage(${assistant}, \"${message.content}\", \"$html\")", "", 0)
         }
 
         private fun renderMarkdown(source: String): String {

@@ -1,8 +1,8 @@
 /*
- * Copyright 2024 CodeMaker AI Inc. All rights reserved.
+ * Copyright 2023 CodeMaker AI Inc. All rights reserved.
  */
 
-package ai.codemaker.jetbrains.window
+package ai.codemaker.jetbrains.assistant.handler
 
 import com.intellij.openapi.util.io.toNioPath
 import org.cef.browser.CefBrowser
@@ -13,7 +13,7 @@ import org.cef.misc.BoolRef
 import org.cef.network.CefRequest
 import java.net.URL
 
-private typealias CefResourceProvider = () -> CefResourceHandler?
+typealias CefResourceProvider = () -> CefResourceHandler?
 
 class FileResourceProvider() : CefRequestHandlerAdapter() {
 

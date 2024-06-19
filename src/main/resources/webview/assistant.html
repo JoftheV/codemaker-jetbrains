@@ -98,7 +98,7 @@
     </div>
 </div>
 <script>
-    window.appendMessage = function (body, assistant) {
+    window.appendMessage = async function (assistant, message, html) {
         const card = document.createElement("div");
         card.classList.add("card", assistant ? "assistant" : "user");
 
@@ -107,29 +107,49 @@
         label.classList.add("label");
         card.appendChild(label)
 
-        const message = document.createElement("div");
-        message.classList.add("message");
-        message.innerHTML = body;
-        card.appendChild(message);
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message");
+        messageElement.innerHTML = html;
+        card.appendChild(messageElement);
 
-        const controls = document.createElement("div");
-        controls.classList.add("controls");
-        card.append(controls);
+        if (assistant) {
+            const controls = document.createElement("div");
+            controls.classList.add("controls");
+            card.append(controls);
 
-        const upVoteButton = document.createElement('img');
-        upVoteButton.classList.add('icon');
-        upVoteButton.src = "media/thumbs-up-off.svg";
-        controls.append(upVoteButton);
+            const upVoteButton = document.createElement('img');
+            upVoteButton.classList.add('icon');
+            upVoteButton.src = "media/thumbs-up-off.svg";
+            controls.append(upVoteButton);
 
-        const downVoteButton = document.createElement('img');
-        downVoteButton.classList.add('icon');
-        downVoteButton.src = "media/thumbs-down-off.svg";
-        controls.append(downVoteButton);
+            const downVoteButton = document.createElement('img');
+            downVoteButton.classList.add('icon');
+            downVoteButton.src = "media/thumbs-down-off.svg";
+            controls.append(downVoteButton);
 
-        const copyButton = document.createElement('img');
-        copyButton.classList.add('icon');
-        copyButton.src = "media/copy-off.svg";
-        controls.append(copyButton);
+            const copyButton = document.createElement('img');
+            copyButton.classList.add('icon');
+            copyButton.src = "media/copy-off.svg";
+            controls.append(copyButton);
+
+            upVoteButton.addEventListener('click', function (event) {
+                upVoteButton.src = "media/thumbs-up.svg";
+                downVoteButton.src = "media/thumbs-down-off.svg";
+            });
+
+            downVoteButton.addEventListener('click', function (event) {
+                upVoteButton.src = "media/thumbs-up-off.svg";
+                downVoteButton.src = "media/thumbs-down.svg";
+            });
+
+            copyButton.addEventListener('click', function (event) {
+                copyButton.src = "media/copy.svg";
+                navigator.clipboard.writeText(message);
+                setTimeout(function() {
+                    copyButton.src = "media/copy-off.svg";
+                }, 500);
+            });
+        }
 
         document.getElementById("chat").appendChild(card);
         document.getElementById("anchor").scrollIntoView({behavior: "smooth"});
