@@ -4,6 +4,7 @@ package ai.codemaker.service;
 service CodemakerService {
   rpc AssistantCompletion (AssistantCompletionRequest) returns (AssistantCompletionResponse);
   rpc AssistantCodeCompletion (AssistantCodeCompletionRequest) returns (AssistantCodeCompletionResponse);
+  rpc RegisterAssistantFeedback (RegisterAssistantFeedbackRequest) returns (RegisterAssistantFeedbackResponse);
   rpc Completion (CompletionRequest) returns (CompletionResponse);
   rpc Process (ProcessRequest) returns (ProcessResponse);
   rpc Predict (PredictRequest) returns (PredictResponse);
@@ -24,15 +25,29 @@ enum Mode {
 enum Language {
   SQL = 0;
   C = 1;
+  OBJECTIVEC = 2;
   CPP = 3;
+  PYTHON = 4;
+  R = 5;
+  HTML = 6;
   JAVA = 7;
   PHP = 8;
   JAVASCRIPT = 9;
+  RUBY = 10;
+  XML = 11;
+  CSS = 12;
   CSHARP = 13;
+  YAML = 14;
+  JSON = 15;
+  SCALA = 16;
+  SASS = 17;
   GO = 18;
   KOTLIN = 19;
   TYPESCRIPT = 20;
+  TOML = 21;
+  SWIFT = 22;
   RUST = 23;
+  DART = 24;
 }
 
 enum Encoding {
@@ -53,6 +68,11 @@ enum IndentationCharacter {
 enum Visibility {
   ALL = 0;
   PUBLIC = 1;
+}
+
+enum Vote {
+  UP_VOTE = 0;
+  DOWN_VOTE = 1;
 }
 
 message Source {
@@ -126,17 +146,6 @@ message PredictionOptions {
   string model = 2;
 }
 
-message ProcessRequest {
-  Mode mode = 1;
-  Language language = 2;
-  Input input = 3;
-  ProcessOptions options = 4;
-}
-
-message ProcessResponse {
-  Output output = 1;
-}
-
 message AssistantCompletionRequest {
   string message = 1;
 }
@@ -161,6 +170,16 @@ message AssistantCodeCompletionResponse {
   string messageId = 4;
 }
 
+message RegisterAssistantFeedbackRequest {
+  string sessionId = 1;
+  string messageId = 2;
+  Vote vote = 3;
+}
+
+message RegisterAssistantFeedbackResponse {
+
+}
+
 message CompletionRequest {
   Language language = 1;
   Input input = 2;
@@ -168,6 +187,17 @@ message CompletionRequest {
 }
 
 message CompletionResponse {
+  Output output = 1;
+}
+
+message ProcessRequest {
+  Mode mode = 1;
+  Language language = 2;
+  Input input = 3;
+  ProcessOptions options = 4;
+}
+
+message ProcessResponse {
   Output output = 1;
 }
 
