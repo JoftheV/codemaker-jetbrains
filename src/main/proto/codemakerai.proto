@@ -24,29 +24,15 @@ enum Mode {
 enum Language {
   SQL = 0;
   C = 1;
-  OBJECTIVEC = 2;
   CPP = 3;
-  PYTHON = 4;
-  R = 5;
-  HTML = 6;
   JAVA = 7;
   PHP = 8;
   JAVASCRIPT = 9;
-  RUBY = 10;
-  XML = 11;
-  CSS = 12;
   CSHARP = 13;
-  YAML = 14;
-  JSON = 15;
-  SCALA = 16;
-  SASS = 17;
   GO = 18;
   KOTLIN = 19;
   TYPESCRIPT = 20;
-  TOML = 21;
-  SWIFT = 22;
   RUST = 23;
-  DART = 24;
 }
 
 enum Encoding {
