@@ -81,7 +81,6 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         private fun createChatPanel(): Component {
             chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
-            chatScreen.setOpenLinksInExternalBrowser(true)
             chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
             val resourceHandler = FileResourceProvider()
             resourceHandler.addResource("/") { StreamResourceHandler("webview", this) }

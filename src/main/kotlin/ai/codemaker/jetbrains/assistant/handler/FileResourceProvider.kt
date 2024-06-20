@@ -4,6 +4,7 @@
 
 package ai.codemaker.jetbrains.assistant.handler
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.util.io.toNioPath
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -45,6 +46,25 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
 
     fun addResource(path: String, resourceProvider: CefResourceProvider) {
         resources[path] = resourceProvider
+    }
+
+    override fun onBeforeBrowse(
+        browser: CefBrowser?,
+        frame: CefFrame?,
+        request: CefRequest?,
+        user_gesture: Boolean,
+        is_redirect: Boolean
+    ): Boolean {
+        val url = URL(request!!.url)
+        if (protocol == url.protocol) {
+            return false
+        }
+
+        if (user_gesture) {
+            BrowserUtil.open(request!!.url)
+            return true
+        }
+        return false
     }
 
     override fun getResourceRequestHandler(
