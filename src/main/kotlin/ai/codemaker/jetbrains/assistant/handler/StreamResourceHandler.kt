@@ -6,7 +6,6 @@ package ai.codemaker.jetbrains.assistant.handler
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.toNioPath
 import io.ktor.util.*
 import org.cef.callback.CefCallback
 import org.cef.handler.CefResourceHandler
@@ -37,7 +36,7 @@ class StreamResourceHandler(private val resourcePath: String, parent: Disposable
             return false
         }
 
-        when (path.toNioPath().extension) {
+        when (Path.of(path).extension) {
             "html" -> mimeType = "text/html";
             "svg" -> mimeType = "image/svg+xml";
         }

@@ -5,7 +5,6 @@
 package ai.codemaker.jetbrains.assistant.handler
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.util.io.toNioPath
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefCallback
@@ -13,6 +12,7 @@ import org.cef.handler.*
 import org.cef.misc.BoolRef
 import org.cef.network.CefRequest
 import java.net.URL
+import java.nio.file.Path
 
 typealias CefResourceProvider = () -> CefResourceHandler?
 
@@ -80,7 +80,7 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
     }
 
     private fun resolveHandler(url: URL): CefResourceHandler? {
-        var path = url.path.toNioPath()
+        var path = Path.of(url.path)
         while (path != null) {
             val handler = resources[path.toString()]
             if (handler != null) {
