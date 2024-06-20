@@ -21,6 +21,7 @@ import java.nio.file.Path
 class StreamResourceHandler(private val resourcePath: String, parent: Disposable) : CefResourceHandler, Disposable {
 
     private var input: InputStream? = null
+
     private var mimeType = "text/html"
 
     init {

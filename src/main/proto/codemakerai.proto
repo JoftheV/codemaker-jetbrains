@@ -4,6 +4,7 @@ package ai.codemaker.service;
 service CodemakerService {
   rpc AssistantCompletion (AssistantCompletionRequest) returns (AssistantCompletionResponse);
   rpc AssistantCodeCompletion (AssistantCodeCompletionRequest) returns (AssistantCodeCompletionResponse);
+  rpc AssistantSpeech (AssistantSpeechRequest) returns (AssistantSpeechResponse);
   rpc RegisterAssistantFeedback (RegisterAssistantFeedbackRequest) returns (RegisterAssistantFeedbackResponse);
   rpc Completion (CompletionRequest) returns (CompletionResponse);
   rpc Process (ProcessRequest) returns (ProcessResponse);
@@ -168,6 +169,14 @@ message AssistantCodeCompletionResponse {
   Output output = 2;
   string sessionId = 3;
   string messageId = 4;
+}
+
+message AssistantSpeechRequest {
+  string message = 1;
+}
+
+message AssistantSpeechResponse {
+  bytes audio = 1;
 }
 
 message RegisterAssistantFeedbackRequest {
