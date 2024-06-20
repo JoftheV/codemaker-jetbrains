@@ -3,6 +3,7 @@ import com.google.protobuf.gradle.*
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.23"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
     id("org.jetbrains.intellij") version "1.17.3"
     id("com.google.protobuf") version "0.9.4"
 }
@@ -19,6 +20,8 @@ configurations.all {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
     implementation("io.grpc:grpc-protobuf:1.64.0")
     implementation("io.grpc:grpc-services:1.64.0")
     implementation("io.grpc:grpc-stub:1.64.0")

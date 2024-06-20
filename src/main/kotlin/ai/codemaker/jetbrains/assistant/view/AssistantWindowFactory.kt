@@ -26,6 +26,11 @@ import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefBrowserBuilder
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import org.cef.browser.CefBrowser
+import org.cef.handler.CefLoadHandlerAdapter
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
@@ -37,6 +42,9 @@ import java.util.*
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JTextField
+
+@Serializable
+data class AssistantFeedback(val sessionId: String, val messageId: String, val vote: String)
 
 class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
@@ -54,10 +62,10 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         val contentPanel = JPanel()
         private val chatScreen = JBCefBrowser.create(JBCefBrowserBuilder().setCreateImmediately(false))
-        private val jsQuery = JBCefJSQuery.create(chatScreen as JBCefBrowserBase)
+        private val recordAssistantFeedbackJsQuery = JBCefJSQuery.create(chatScreen as JBCefBrowserBase)
         private val messageTextField = JTextField()
 
-        val messages = ArrayList<Message>()
+        private val service: CodeMakerService = project.getService(CodeMakerService::class.java)
 
         init {
             contentPanel.setLayout(BorderLayout(0, 10))
@@ -65,19 +73,20 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             contentPanel.add(createChatPanel(), BorderLayout.CENTER)
             contentPanel.add(createMessagePanel(), BorderLayout.SOUTH)
 
-            Disposer.register(this, jsQuery)
+            Disposer.register(this, recordAssistantFeedbackJsQuery)
         }
 
         override fun dispose() {
         }
 
         private fun createChatPanel(): Component {
-            // chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
+            chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
             chatScreen.setOpenLinksInExternalBrowser(true)
             chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
             val resourceHandler = FileResourceProvider()
             resourceHandler.addResource("/") { StreamResourceHandler("webview", this) }
             chatScreen.jbCefClient.addRequestHandler(resourceHandler, chatScreen.cefBrowser)
+            chatScreen.jbCefClient.addLoadHandler(LoadHandler(), chatScreen.cefBrowser)
             return chatScreen.component
         }
 
@@ -98,11 +107,12 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun addMessage(input: String, role: Role) {
-            // TODO cap message size
-            val message = Message(UUID.randomUUID().toString(), input, role, Date())
-            messages.add(message)
+            addMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), input, role)
+        }
+
+        private fun addMessage(sessionId: String, messageId: String, input: String, role: Role) {
             hidePendingMessage()
-            appendMessage(message)
+            appendMessage(Message(sessionId, messageId, input, role, Date()))
         }
 
         private fun showPendingMessage() {
@@ -133,19 +143,17 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
                 ApplicationManager.getApplication().executeOnPooledThread {
                     try {
-                        val service: CodeMakerService = project.getService(CodeMakerService::class.java)
-
                         val fileEditorManager = FileEditorManager.getInstance(project)
                         val file = fileEditorManager.getSelectedEditor()?.file
 
                         val isAssistantActionsEnabled = AppSettingsState.instance.assistantActionsEnabled
 
                         if (isAssistantActionsEnabled && file != null && FileExtensions.isSupported(file.extension)) {
-                            val output = service.assistantCodeCompletion(input, file)
-                            addMessage(output, Role.Assistant)
+                            val response = service.assistantCodeCompletion(input, file)
+                            addMessage(response.sessionId, response.messageId, response.message, Role.Assistant)
                         } else {
-                            val output = service.assistantCompletion(input)
-                            addMessage(output, Role.Assistant)
+                            val response = service.assistantCompletion(input)
+                            addMessage(response.sessionId, response.messageId, response.message, Role.Assistant)
                         }
                     } catch (e: Exception) {
                         addMessage("Assistant could not complete this request. Please try again.", Role.Assistant)
@@ -158,7 +166,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             val content = escape(message.content)
             val html = escape(renderMarkdown(message.content))
             val assistant = (message.role == Role.Assistant).toString()
-            chatScreen.cefBrowser.executeJavaScript("window.appendMessage($assistant, \"$content\", \"$html\")", "", 0)
+            chatScreen.cefBrowser.executeJavaScript("window.appendMessage($assistant, \"${message.sessionId}\", \"${message.messageId}\", \"$content\", \"$html\")", "", 0)
         }
 
         private fun escape(input: String) = input.replace("\n", "\\n").replace("\"", "\\\"")
@@ -167,6 +175,25 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             val flavour = CommonMarkFlavourDescriptor()
             val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(source)
             return HtmlGenerator(source, parsedTree, flavour).generateHtml()
+        }
+
+        private fun registerJavaScriptCallback() {
+            recordAssistantFeedbackJsQuery.addHandler {
+                val feedback = Json.decodeFromString<AssistantFeedback>(it)
+                service.assistantFeedback(feedback.sessionId, feedback.messageId, feedback.vote)
+                return@addHandler null
+            }
+
+            chatScreen.cefBrowser.executeJavaScript(
+                """window.recordAssistantFeedback = function(sessionId, messageId, vote) {
+                        const request = JSON.stringify({
+                            sessionId,
+                            messageId,
+                            vote,
+                        });
+                        ${recordAssistantFeedbackJsQuery.inject("request")}
+                    };""".trimIndent(),
+                chatScreen.cefBrowser.url, 0)
         }
 
         inner class MessageTextKeyListener : KeyListener {
@@ -180,6 +207,12 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             }
 
             override fun keyReleased(e: KeyEvent?) {
+            }
+        }
+
+        inner class LoadHandler : CefLoadHandlerAdapter() {
+            override fun onLoadingStateChange(browser: CefBrowser?, isLoading: Boolean, canGoBack: Boolean, canGoForward: Boolean) {
+                registerJavaScriptCallback()
             }
         }
     }

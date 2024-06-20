@@ -98,7 +98,7 @@
     </div>
 </div>
 <script>
-    window.appendMessage = function (assistant, message, html) {
+    window.appendMessage = function (assistant, sessionId, messageId, message, html) {
         const card = document.createElement("div");
         card.classList.add("card", assistant ? "assistant" : "user");
 
@@ -135,11 +135,13 @@
             upVoteButton.addEventListener('click', function (event) {
                 upVoteButton.src = "media/thumbs-up.svg";
                 downVoteButton.src = "media/thumbs-down-off.svg";
+                window.recordAssistantFeedback(sessionId, messageId, "UP_VOTE");
             });
 
             downVoteButton.addEventListener('click', function (event) {
                 upVoteButton.src = "media/thumbs-up-off.svg";
                 downVoteButton.src = "media/thumbs-down.svg";
+                window.recordAssistantFeedback(sessionId, messageId, "DOWN_VOTE");
             });
 
             copyButton.addEventListener('click', function (event) {

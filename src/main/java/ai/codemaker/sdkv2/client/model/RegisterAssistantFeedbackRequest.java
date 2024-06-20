@@ -4,18 +4,18 @@
 
 package ai.codemaker.sdkv2.client.model;
 
-public class AssistantCompletionResponse {
+public class RegisterAssistantFeedbackRequest {
 
     private final String sessionId;
 
     private final String messageId;
 
-    private final String message;
+    private final Vote vote;
 
-    public AssistantCompletionResponse(String sessionId, String messageId, String message) {
+    public RegisterAssistantFeedbackRequest(String sessionId, String messageId, Vote vote) {
         this.sessionId = sessionId;
         this.messageId = messageId;
-        this.message = message;
+        this.vote = vote;
     }
 
     public String getSessionId() {
@@ -26,7 +26,7 @@ public class AssistantCompletionResponse {
         return messageId;
     }
 
-    public String getMessage() {
-        return message;
+    public Vote getVote() {
+        return vote;
     }
 }

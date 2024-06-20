@@ -73,27 +73,36 @@ class CodeMakerService(private val project: Project) {
         process(Mode.FIX_SYNTAX, "Fixing code", path, modify, codePath)
     }
 
-    fun assistantCompletion(message: String): String {
-        val assistantCompletionResponse = client.assistantCompletion(createAssistantCompletionRequest(message))
-        return assistantCompletionResponse.message
+    fun assistantCompletion(message: String): AssistantCompletionResponse {
+        try {
+            return client.assistantCompletion(createAssistantCompletionRequest(message))
+        } catch (e: UnauthorizedException) {
+            logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to process assistant completion.", e)
+            throw e
+        }
     }
 
-    fun assistantCodeCompletion(message: String, path: VirtualFile?): String {
+    fun assistantCodeCompletion(message: String, path: VirtualFile?): AssistantCodeCompletionResponse {
         try {
             val model = AppSettingsState.instance.model
 
-            val source = readFile(path!!) ?: return ""
+            val source = readFile(path!!)!!
             val language = FileExtensions.languageFromExtension(path.extension)
 
             val contextId = registerContext(client, language!!, source, path.path)
 
-            val response = client.assistantCodeCompletion(createAssistantCodeCompletionRequest(message, language, source, contextId, model))
+            val response = client.assistantCodeCompletion(
+                createAssistantCodeCompletionRequest(message, language, source, contextId, model)
+            )
 
             if (response.output.source.isNotEmpty()) {
                 writeFile(path, response.output.source)
             }
 
-            return response.message
+            return response
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: UnauthorizedException) {
@@ -101,7 +110,19 @@ class CodeMakerService(private val project: Project) {
             throw e
         } catch (e: Exception) {
             logger.error("Failed to process assistant completion.", e)
-            return ""
+            throw e
+        }
+    }
+
+    fun assistantFeedback(sessionId: String, messageId: String, vote: String): RegisterAssistantFeedbackResponse {
+        try {
+            return client.registerAssistantFeedback(createRegisterAssistantFeedbackRequest(sessionId, messageId, vote))
+        } catch (e: UnauthorizedException) {
+            logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to process assistant completion.", e)
+            throw e
         }
     }
 
@@ -461,6 +482,10 @@ class CodeMakerService(private val project: Project) {
                 Input(source),
                 Options(null, null, null, false, false, contextId, model, null, null, null)
         )
+    }
+
+    private fun createRegisterAssistantFeedbackRequest(sessionId: String, messageId: String, vote: String): RegisterAssistantFeedbackRequest {
+        return RegisterAssistantFeedbackRequest(sessionId, messageId, Vote.valueOf(vote))
     }
 
     private fun createListModelsRequest(): ListModelsRequest? {

@@ -27,10 +27,13 @@ import ai.codemaker.sdkv2.client.model.PredictRequest;
 import ai.codemaker.sdkv2.client.model.PredictResponse;
 import ai.codemaker.sdkv2.client.model.ProcessRequest;
 import ai.codemaker.sdkv2.client.model.ProcessResponse;
+import ai.codemaker.sdkv2.client.model.RegisterAssistantFeedbackRequest;
+import ai.codemaker.sdkv2.client.model.RegisterAssistantFeedbackResponse;
 import ai.codemaker.sdkv2.client.model.RegisterContextRequest;
 import ai.codemaker.sdkv2.client.model.RegisterContextResponse;
 import ai.codemaker.sdkv2.client.model.RequiredContext;
 import ai.codemaker.sdkv2.client.model.Visibility;
+import ai.codemaker.sdkv2.client.model.Vote;
 import ai.codemaker.service.CodemakerServiceGrpc;
 import ai.codemaker.service.Codemakerai;
 import com.google.common.hash.Hashing;
@@ -111,6 +114,15 @@ public final class DefaultClient implements Client {
         final Codemakerai.AssistantCodeCompletionResponse assistantCodeCompletionResponse = doAssistantCodeCompletion(assistantCodeCompletionRequest);
 
         return createAssistantCodeCompletionResponse(assistantCodeCompletionResponse);
+    }
+
+    @Override
+    public RegisterAssistantFeedbackResponse registerAssistantFeedback(RegisterAssistantFeedbackRequest request) {
+        final Codemakerai.RegisterAssistantFeedbackRequest registerAssistantFeedbackRequest = createRegisterAssistantFeedbackRequest(request);
+
+        final Codemakerai.RegisterAssistantFeedbackResponse registerAssistantFeedbackResponse = doRegisterAssistantFeedback(registerAssistantFeedbackRequest);
+
+        return createRegisterAssistantFeedbackResponse(registerAssistantFeedbackResponse);
     }
 
     @Override
@@ -201,6 +213,10 @@ public final class DefaultClient implements Client {
 
     private Codemakerai.AssistantCodeCompletionResponse doAssistantCodeCompletion(Codemakerai.AssistantCodeCompletionRequest request) {
         return doCall(client::assistantCodeCompletion, request);
+    }
+
+    private Codemakerai.RegisterAssistantFeedbackResponse doRegisterAssistantFeedback(Codemakerai.RegisterAssistantFeedbackRequest request) {
+        return doCall(client::registerAssistantFeedback, request);
     }
 
     private Codemakerai.CompletionResponse doCompletion(Codemakerai.CompletionRequest request) {
@@ -305,7 +321,7 @@ public final class DefaultClient implements Client {
     }
 
     private AssistantCompletionResponse createAssistantCompletionResponse(Codemakerai.AssistantCompletionResponse response) {
-        return new AssistantCompletionResponse(response.getMessage());
+        return new AssistantCompletionResponse(response.getSessionId(), response.getMessageId(), response.getMessage());
     }
 
     private Codemakerai.AssistantCodeCompletionRequest createAssistantCodeCompletionRequest(AssistantCodeCompletionRequest request) {
@@ -319,11 +335,23 @@ public final class DefaultClient implements Client {
                 .build();
     }
 
+    private Codemakerai.RegisterAssistantFeedbackRequest createRegisterAssistantFeedbackRequest(RegisterAssistantFeedbackRequest request) {
+        return Codemakerai.RegisterAssistantFeedbackRequest.newBuilder()
+                .setSessionId(request.getSessionId())
+                .setMessageId(request.getMessageId())
+                .setVote(mapVote(request.getVote()))
+                .build();
+    }
+
+    private RegisterAssistantFeedbackResponse createRegisterAssistantFeedbackResponse(Codemakerai.RegisterAssistantFeedbackResponse registerAssistantFeedbackResponse) {
+        return new RegisterAssistantFeedbackResponse();
+    }
+
     private AssistantCodeCompletionResponse createAssistantCodeCompletionResponse(Codemakerai.AssistantCodeCompletionResponse response) {
         final Codemakerai.Source content = response.getOutput().getSource();
         final String output = decodeOutput(content);
 
-        return new AssistantCodeCompletionResponse(response.getMessage(), new Output(output));
+        return new AssistantCodeCompletionResponse(response.getSessionId(), response.getMessageId(), response.getMessage(), new Output(output));
     }
 
     private Codemakerai.CompletionRequest createCompletionRequest(CompletionRequest request) {
@@ -517,6 +545,13 @@ public final class DefaultClient implements Client {
             case KOTLIN -> Codemakerai.Language.KOTLIN;
             case TYPESCRIPT -> Codemakerai.Language.TYPESCRIPT;
             case RUST -> Codemakerai.Language.RUST;
+        };
+    }
+
+    private Codemakerai.Vote mapVote(Vote vote) {
+        return switch (vote) {
+            case UP_VOTE -> Codemakerai.Vote.UP_VOTE;
+            case DOWN_VOTE -> Codemakerai.Vote.DOWN_VOTE;
         };
     }
 
