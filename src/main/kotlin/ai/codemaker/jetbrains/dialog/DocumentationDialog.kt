@@ -14,7 +14,7 @@ import javax.swing.*
 
 class DocumentationDialog : DialogWrapper(true) {
 
-    private val visibilityLabels = mapOf("All" to Visibility.ALL)
+    private val visibilityLabels = mapOf("All" to Visibility.ALL, "Public" to Visibility.PUBLIC)
 
     private val overrideIndent = JSpinner(SpinnerNumberModel(4, 1, 20, 1))
     private val minimalLinesLength = JSpinner(SpinnerNumberModel(0, 0, 1000, 1))
