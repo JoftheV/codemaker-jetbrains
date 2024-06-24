@@ -180,6 +180,10 @@
 
         <toolWindow id="CodeMaker AI" secondary="false" anchor="left" icon="CodemakerIcons.Logos.ICON"
                     factoryClass="ai.codemaker.jetbrains.assistant.view.AssistantWindowFactory"/>
+
+        <codeInsight.daemonBoundCodeVisionProvider id="CodeMaker AI Explain Assistant" implementation="ai.codemaker.jetbrains.insight.AssistantExplainCodeVisionProvider" />
+        <codeInsight.daemonBoundCodeVisionProvider id="CodeMaker AI Explain Review" implementation="ai.codemaker.jetbrains.insight.AssistantReviewCodeVisionProvider" />
+        <codeInsight.daemonBoundCodeVisionProvider id="CodeMaker AI Explain Test" implementation="ai.codemaker.jetbrains.insight.AssistantTestCodeVisionProvider" />
     </extensions>
 
     <projectListeners>

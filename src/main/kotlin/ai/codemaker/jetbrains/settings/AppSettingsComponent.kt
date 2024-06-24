@@ -31,6 +31,7 @@ class AppSettingsComponent(project: Project) {
     private val extendedSourceContextEnabledCheck = JBCheckBox()
     private val extendedSourceContextDepthCombo = ComboBox(arrayOf(1, 2, 3))
     private val assistantActionsEnabledCheck = JBCheckBox()
+    private val assistantCodeVisionEnabledCheck = JBCheckBox()
     private val syntaxAutocorrectionEnabledCheck = JBCheckBox()
     private val endpointText = JBTextField()
 
@@ -68,6 +69,7 @@ class AppSettingsComponent(project: Project) {
                 .addLabeledComponent(JBLabel("Extended source context depth: "), extendedSourceContextDepthCombo, 1, false)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("Enable assistant contextual operations: "), assistantActionsEnabledCheck, 1, false)
+                .addLabeledComponent(JBLabel("Enable assistant code vision: "), assistantCodeVisionEnabledCheck, 1, false)
                 .addSeparator()
                 .addLabeledComponent(JBLabel("Enable syntax autocorrection: "), syntaxAutocorrectionEnabledCheck, 1, false)
                 .addSeparator()
@@ -148,6 +150,12 @@ class AppSettingsComponent(project: Project) {
         get() = assistantActionsEnabledCheck.isSelected
         set(enabled) {
             assistantActionsEnabledCheck.isSelected = enabled
+        }
+
+    var assistantCodeVisionEnabled: Boolean
+        get() = assistantCodeVisionEnabledCheck.isSelected
+        set(enabled) {
+            assistantCodeVisionEnabledCheck.isSelected = enabled
         }
 
     var syntaxAutocorrectionEnabled: Boolean

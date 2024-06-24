@@ -5,6 +5,7 @@
 package ai.codemaker.jetbrains.action
 
 import ai.codemaker.jetbrains.assistant.notification.AssistantNotifier
+import ai.codemaker.jetbrains.assistant.publisher.AssistantMessagePublisher
 import ai.codemaker.jetbrains.assistant.view.AssistantWindowFactory
 import ai.codemaker.jetbrains.psi.PsiMethod
 import ai.codemaker.jetbrains.psi.PsiUtils
@@ -24,13 +25,6 @@ abstract class BaseAssistantAction : AnAction() {
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
         val method = PsiUtils.getMethod(psiFile, editor.caretModel.offset) ?: return
 
-        publisher(project).onMessage(message(method))
-
-        val toolWindowManager = ToolWindowManager.getInstance(project)
-        val toolWindow = toolWindowManager.getToolWindow(AssistantWindowFactory.TOOL_WINDOW_ID) ?: return
-        toolWindow.activate(null)
+        AssistantMessagePublisher.publishMessage(project, message(method))
     }
-
-    private fun publisher(project: Project) =
-        project.messageBus.syncPublisher(AssistantNotifier.ASSISTANT_TOPIC)
 }

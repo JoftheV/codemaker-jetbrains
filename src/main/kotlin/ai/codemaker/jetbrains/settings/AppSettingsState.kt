@@ -43,6 +43,9 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState> {
     var assistantActionsEnabled: Boolean = true
 
     @JvmField
+    var assistantCodeVisionEnabled: Boolean = true
+
+    @JvmField
     var syntaxAutocorrectionEnabled: Boolean = false
 
     @JvmField

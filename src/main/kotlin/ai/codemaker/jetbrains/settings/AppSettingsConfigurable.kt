@@ -36,6 +36,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
                 || settingsComponent!!.extendedSourceContextEnabled != settings.extendedSourceContextEnabled
                 || settingsComponent!!.extendedSourceContextDepth != settings.extendedSourceContextDepth
                 || settingsComponent!!.assistantActionsEnabled != settings.assistantActionsEnabled
+                || settingsComponent!!.assistantCodeVisionEnabled != settings.assistantCodeVisionEnabled
                 || settingsComponent!!.syntaxAutocorrectionEnabled != settings.syntaxAutocorrectionEnabled
                 || settingsComponent!!.endpoint != settings.endpoint
     }
@@ -52,6 +53,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settings.extendedSourceContextEnabled = settingsComponent!!.extendedSourceContextEnabled
         settings.extendedSourceContextDepth = settingsComponent!!.extendedSourceContextDepth
         settings.assistantActionsEnabled = settingsComponent!!.assistantActionsEnabled
+        settings.assistantCodeVisionEnabled = settingsComponent!!.assistantCodeVisionEnabled
         settings.syntaxAutocorrectionEnabled = settingsComponent!!.syntaxAutocorrectionEnabled
         settings.endpoint = settingsComponent!!.endpoint
     }
@@ -68,6 +70,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settingsComponent!!.extendedSourceContextEnabled = settings.extendedSourceContextEnabled
         settingsComponent!!.extendedSourceContextDepth = settings.extendedSourceContextDepth
         settingsComponent!!.assistantActionsEnabled = settings.assistantActionsEnabled
+        settingsComponent!!.assistantCodeVisionEnabled = settings.assistantCodeVisionEnabled
         settingsComponent!!.syntaxAutocorrectionEnabled = settings.syntaxAutocorrectionEnabled
         settingsComponent!!.endpoint = settings.endpoint
     }
