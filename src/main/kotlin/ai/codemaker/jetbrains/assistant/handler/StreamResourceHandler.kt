@@ -15,6 +15,7 @@ import org.cef.network.CefRequest
 import org.cef.network.CefResponse
 import java.io.IOException
 import java.io.InputStream
+import java.net.URI
 import java.net.URL
 import java.nio.file.Path
 
@@ -29,7 +30,7 @@ class StreamResourceHandler(private val resourcePath: String, parent: Disposable
     }
 
     override fun processRequest(request: CefRequest?, callback: CefCallback?): Boolean {
-        val url = URL(request!!.url)
+        val url = URI(request!!.url).toURL()
         val path = url.path
 
         input = this.javaClass.classLoader.getResourceAsStream(Path.of(resourcePath, path).toString())
@@ -49,7 +50,7 @@ class StreamResourceHandler(private val resourcePath: String, parent: Disposable
     override fun getResponseHeaders(response: CefResponse?, responseLength: IntRef?, redirectUrl: StringRef?) {
         responseLength!!.set(input!!.available())
         response!!.mimeType = mimeType
-        response!!.status = 200
+        response.status = 200
     }
 
     override fun readResponse(
@@ -60,7 +61,7 @@ class StreamResourceHandler(private val resourcePath: String, parent: Disposable
     ): Boolean {
         try {
             bytesRead!!.set(input!!.read(dataOut!!, 0, bytesToRead))
-            if (bytesRead!!.get() != -1) {
+            if (bytesRead.get() != -1) {
                 return true
             }
         } catch (e: IOException) {

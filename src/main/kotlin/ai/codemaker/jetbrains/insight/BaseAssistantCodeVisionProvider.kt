@@ -15,7 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import java.awt.event.MouseEvent
 
-abstract class BaseAssistantCodeVisionProvider(val suffix: String, val command: String) : CodeVisionProviderBase() {
+abstract class BaseAssistantCodeVisionProvider(suffix: String, private val command: String) : CodeVisionProviderBase() {
 
     override val id = "ai.codemaker.codevision.assistant.$suffix"
 
@@ -37,6 +37,6 @@ abstract class BaseAssistantCodeVisionProvider(val suffix: String, val command: 
         val method = PsiMethod(element as PsiNameIdentifierOwner)
         val project = element.project
 
-        AssistantMessagePublisher.publishMessage(project, "${command} ${method.elementName} method.")
+        AssistantMessagePublisher.publishMessage(project, "$command ${method.elementName} method.")
     }
 }

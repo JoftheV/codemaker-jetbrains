@@ -11,6 +11,7 @@ import org.cef.callback.CefCallback
 import org.cef.handler.*
 import org.cef.misc.BoolRef
 import org.cef.network.CefRequest
+import java.net.URI
 import java.net.URL
 import java.nio.file.Path
 
@@ -35,7 +36,7 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
             frame: CefFrame?,
             request: CefRequest
         ): CefResourceHandler? {
-            val url = URL(request.url)
+            val url = URI(request.url).toURL()
             if (protocol != url.protocol) {
                 return REJECTING_RESOURCE_HANDLER
             }
@@ -55,13 +56,13 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
         user_gesture: Boolean,
         is_redirect: Boolean
     ): Boolean {
-        val url = URL(request!!.url)
+        val url = URI(request!!.url).toURL()
         if (protocol == url.protocol) {
             return false
         }
 
         if (user_gesture) {
-            BrowserUtil.open(request!!.url)
+            BrowserUtil.open(request.url)
             return true
         }
         return false
@@ -80,7 +81,7 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
     }
 
     private fun resolveHandler(url: URL): CefResourceHandler? {
-        var path = Path.of(url.path)
+        var path: Path? = Path.of(url.path)
         while (path != null) {
             val handler = resources[path.toString()]
             if (handler != null) {
