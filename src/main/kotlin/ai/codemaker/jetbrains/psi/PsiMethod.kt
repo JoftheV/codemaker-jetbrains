@@ -32,6 +32,11 @@ class PsiMethod(psiElement: PsiNameIdentifierOwner) {
             return element.fullyQualifiedName
         }
 
+    val elementName: String?
+        get() {
+            return element.elementName
+        }
+
     val codePath: String?
         get() {
             val name = element.fullyQualifiedName ?: return null
@@ -47,10 +52,13 @@ class PsiMethod(psiElement: PsiNameIdentifierOwner) {
     }
 
     private interface IdentifiableElement {
+        val elementName: String?
         val fullyQualifiedName: String?
     }
 
     private class NamedElement(psiElement: PsiNameIdentifierOwner) : IdentifiableElement {
+
+        override val elementName = psiElement.name
 
         override val fullyQualifiedName = this.elementFullyQualifiedName(psiElement)
 
@@ -79,6 +87,8 @@ class PsiMethod(psiElement: PsiNameIdentifierOwner) {
     }
 
     private class ReceiverElement(psiElement: PsiNameIdentifierOwner) : IdentifiableElement {
+        override val elementName = psiElement.name
+
         override val fullyQualifiedName = this.elementFullyQualifiedName(psiElement)
 
         private fun elementFullyQualifiedName(psiElement: PsiNameIdentifierOwner): String? {

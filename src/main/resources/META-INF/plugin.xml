@@ -87,6 +87,23 @@
             </action>
         </group>
 
+        <group id="ai.codemaker.jetbrains.Assistant" class="ai.codemaker.jetbrains.group.AssistantGroup"
+               text="Assistant" description="Assistant" popup="true">
+            <add-to-group group-id="ai.codemaker.jetbrains.EditorPopupMenu" anchor="last"/>
+            <action id="ai.codemaker.jetbrains.ExplainAssistantAction"
+                    class="ai.codemaker.jetbrains.action.ExplainAssistantAction" text="Explain"
+                    description="Explain">
+            </action>
+            <action id="ai.codemaker.jetbrains.ReviewAssistantAction"
+                    class="ai.codemaker.jetbrains.action.ExplainAssistantAction" text="Review"
+                    description="Review">
+            </action>
+            <action id="ai.codemaker.jetbrains.UnitTestAssistantAction"
+                    class="ai.codemaker.jetbrains.action.UnitTestAssistantAction" text="Test"
+                    description="Test">
+            </action>
+        </group>
+
         <group id="ai.codemaker.jetbrains.GenerateMenu" text="Generate" description="Generate" popup="true">
             <add-to-group group-id="ai.codemaker.jetbrains.ProjectViewPopupMenu" anchor="last"/>
             <add-to-group group-id="ai.codemaker.jetbrains.EditorPopupMenu" anchor="last"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 CodeMaker AI Inc. All rights reserved.
+ * Copyright 2024 CodeMaker AI Inc. All rights reserved.
  */
 
 package ai.codemaker.jetbrains.assistant.view
@@ -8,6 +8,7 @@ import ai.codemaker.jetbrains.assistant.Message
 import ai.codemaker.jetbrains.assistant.Role
 import ai.codemaker.jetbrains.assistant.handler.FileResourceProvider
 import ai.codemaker.jetbrains.assistant.handler.StreamResourceHandler
+import ai.codemaker.jetbrains.assistant.notification.AssistantNotifier
 import ai.codemaker.jetbrains.file.FileExtensions
 import ai.codemaker.jetbrains.service.CodeMakerService
 import ai.codemaker.jetbrains.settings.AppSettingsState
@@ -48,7 +49,8 @@ data class AssistantFeedback(val sessionId: String, val messageId: String, val v
 
 class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
-    object AssistantWindowFactory {
+    companion object AssistantWindowFactory {
+        const val TOOL_WINDOW_ID = "CodeMaker AI"
         const val ASSISTANT_HOME_VIEW = "file:///assistant.html"
     }
 
@@ -72,6 +74,12 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             contentPanel.border = JBUI.Borders.empty(5)
             contentPanel.add(createChatPanel(), BorderLayout.CENTER)
             contentPanel.add(createMessagePanel(), BorderLayout.SOUTH)
+
+            project.messageBus.connect().subscribe(AssistantNotifier.ASSISTANT_TOPIC, object : AssistantNotifier {
+                override fun onMessage(message: String) {
+                    sendMessage(message)
+                }
+            })
 
             Disposer.register(this, recordAssistantFeedbackJsQuery)
         }
@@ -124,9 +132,12 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         private fun sendMessage() {
             val input = messageTextField.text.trim()
+            messageTextField.text = ""
+            sendMessage(input)
+        }
 
+        private fun sendMessage(input: String) {
             if (input.isNotEmpty()) {
-                messageTextField.text = ""
                 addMessage(input, Role.User)
 
                 if (AppSettingsState.instance.apiKey.isNullOrEmpty()) {
