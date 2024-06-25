@@ -92,19 +92,19 @@
             <add-to-group group-id="ai.codemaker.jetbrains.EditorPopupMenu" anchor="last"/>
             <action id="ai.codemaker.jetbrains.ExplainAssistantAction"
                     class="ai.codemaker.jetbrains.action.ExplainAssistantAction" text="Explain"
-                    description="Explain">
+                    description="Explains code">
             </action>
             <action id="ai.codemaker.jetbrains.ReviewAssistantAction"
                     class="ai.codemaker.jetbrains.action.ReviewAssistantAction" text="Review"
-                    description="Review">
+                    description="Reviews code">
             </action>
             <action id="ai.codemaker.jetbrains.UnitTestAssistantAction"
                     class="ai.codemaker.jetbrains.action.UnitTestAssistantAction" text="Test"
-                    description="Test">
+                    description="Unit Tests code">
             </action>
             <action id="ai.codemaker.jetbrains.FindBugsAssistantAction"
                     class="ai.codemaker.jetbrains.action.FindBugsAssistantAction" text="Find Bugs"
-                    description="Test">
+                    description="Find bugs in code">
             </action>
         </group>
 
