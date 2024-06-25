@@ -95,11 +95,15 @@
                     description="Explain">
             </action>
             <action id="ai.codemaker.jetbrains.ReviewAssistantAction"
-                    class="ai.codemaker.jetbrains.action.ExplainAssistantAction" text="Review"
+                    class="ai.codemaker.jetbrains.action.ReviewAssistantAction" text="Review"
                     description="Review">
             </action>
             <action id="ai.codemaker.jetbrains.UnitTestAssistantAction"
                     class="ai.codemaker.jetbrains.action.UnitTestAssistantAction" text="Test"
+                    description="Test">
+            </action>
+            <action id="ai.codemaker.jetbrains.FindBugsAssistantAction"
+                    class="ai.codemaker.jetbrains.action.FindBugsAssistantAction" text="Find Bugs"
                     description="Test">
             </action>
         </group>
@@ -181,9 +185,10 @@
         <toolWindow id="CodeMaker AI" secondary="false" anchor="left" icon="CodemakerIcons.Logos.ICON"
                     factoryClass="ai.codemaker.jetbrains.assistant.view.AssistantWindowFactory"/>
 
-        <codeInsight.daemonBoundCodeVisionProvider id="CodeMaker AI Explain Assistant" implementation="ai.codemaker.jetbrains.insight.AssistantExplainCodeVisionProvider" />
-        <codeInsight.daemonBoundCodeVisionProvider id="CodeMaker AI Explain Review" implementation="ai.codemaker.jetbrains.insight.AssistantReviewCodeVisionProvider" />
-        <codeInsight.daemonBoundCodeVisionProvider id="CodeMaker AI Explain Test" implementation="ai.codemaker.jetbrains.insight.AssistantTestCodeVisionProvider" />
+        <codeInsight.daemonBoundCodeVisionProvider implementation="ai.codemaker.jetbrains.insight.AssistantExplainCodeVisionProvider" />
+        <codeInsight.daemonBoundCodeVisionProvider implementation="ai.codemaker.jetbrains.insight.AssistantReviewCodeVisionProvider" />
+        <codeInsight.daemonBoundCodeVisionProvider implementation="ai.codemaker.jetbrains.insight.AssistantTestCodeVisionProvider" />
+        <codeInsight.daemonBoundCodeVisionProvider implementation="ai.codemaker.jetbrains.insight.AssistantFindBugsCodeVisionProvider" />
     </extensions>
 
     <projectListeners>

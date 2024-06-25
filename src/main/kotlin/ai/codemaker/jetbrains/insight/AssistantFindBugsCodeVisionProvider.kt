@@ -8,11 +8,11 @@ import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
-class AssistantTestCodeVisionProvider : BaseAssistantCodeVisionProvider("test", "Unit Test", "Test") {
+class AssistantFindBugsCodeVisionProvider : BaseAssistantCodeVisionProvider("bugs", "Find Bugs", "Find errors in") {
 
     override val relativeOrderings = listOf<CodeVisionRelativeOrdering>(
         CodeVisionRelativeOrdering.CodeVisionRelativeOrderingAfter(
-            "ai.codemaker.codevision.assistant.review"
+            "ai.codemaker.codevision.assistant.test"
         )
     )
 }

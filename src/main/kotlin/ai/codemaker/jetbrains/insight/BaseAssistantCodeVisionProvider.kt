@@ -15,11 +15,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import java.awt.event.MouseEvent
 
-abstract class BaseAssistantCodeVisionProvider(suffix: String, private val command: String) : CodeVisionProviderBase() {
+abstract class BaseAssistantCodeVisionProvider(suffix: String, private val hint: String, private val prompt: String) : CodeVisionProviderBase() {
 
     override val id = "ai.codemaker.codevision.assistant.$suffix"
 
-    override val name = "CodeMaker AI Assistant $command"
+    override val name = "CodeMaker AI Assistant $hint"
 
     override fun acceptsFile(file: PsiFile): Boolean {
         return AppSettingsState.instance.assistantCodeVisionEnabled && FileExtensions.isSupported(file.virtualFile.extension)
@@ -30,13 +30,13 @@ abstract class BaseAssistantCodeVisionProvider(suffix: String, private val comma
     }
 
     override fun getHint(element: PsiElement, file: PsiFile): String? {
-        return command
+        return hint
     }
 
     override fun handleClick(editor: Editor, element: PsiElement, event: MouseEvent?) {
         val method = PsiMethod(element as PsiNameIdentifierOwner)
         val project = element.project
 
-        AssistantMessagePublisher.publishMessage(project, "$command ${method.elementName} method.")
+        AssistantMessagePublisher.publishMessage(project, "$prompt ${method.elementName} method.")
     }
 }

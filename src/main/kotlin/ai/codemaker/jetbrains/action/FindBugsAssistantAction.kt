@@ -6,9 +6,9 @@ package ai.codemaker.jetbrains.action
 
 import ai.codemaker.jetbrains.psi.PsiMethod
 
-class ReviewAssistantAction : BaseAssistantAction() {
+class FindBugsAssistantAction : BaseAssistantAction() {
 
     override fun message(method: PsiMethod): String {
-        return "Review ${method.elementName} method."
+        return "Find errors in ${method.elementName} method."
     }
 }

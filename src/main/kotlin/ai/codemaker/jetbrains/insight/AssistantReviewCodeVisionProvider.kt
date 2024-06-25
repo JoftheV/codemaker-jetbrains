@@ -6,7 +6,7 @@ package ai.codemaker.jetbrains.insight
 
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
 
-class AssistantReviewCodeVisionProvider : BaseAssistantCodeVisionProvider("review", "Review") {
+class AssistantReviewCodeVisionProvider : BaseAssistantCodeVisionProvider("review", "Review", "Review") {
 
     override val relativeOrderings = listOf<CodeVisionRelativeOrdering>(
         CodeVisionRelativeOrdering.CodeVisionRelativeOrderingAfter(

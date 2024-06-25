@@ -9,6 +9,6 @@ import ai.codemaker.jetbrains.psi.PsiMethod
 class UnitTestAssistantAction : BaseAssistantAction() {
 
     override fun message(method: PsiMethod): String {
-        return "Test ${method.elementName} method"
+        return "Test ${method.elementName} method."
     }
 }

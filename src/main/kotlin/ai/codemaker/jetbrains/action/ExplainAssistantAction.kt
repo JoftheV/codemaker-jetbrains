@@ -9,6 +9,6 @@ import ai.codemaker.jetbrains.psi.PsiMethod
 class ExplainAssistantAction : BaseAssistantAction() {
 
     override fun message(method: PsiMethod): String {
-        return "Explain ${method.elementName} method"
+        return "Explain ${method.elementName} method."
     }
 }
