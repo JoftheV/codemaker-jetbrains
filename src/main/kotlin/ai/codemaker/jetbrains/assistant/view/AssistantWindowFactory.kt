@@ -39,10 +39,14 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
+import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JTextField
+
+@Serializable
+data class AssistantSpeech(val messageId: String, val message: String)
 
 @Serializable
 data class AssistantFeedback(val sessionId: String, val messageId: String, val vote: String)
@@ -64,6 +68,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         val contentPanel = JPanel()
         private val chatScreen = JBCefBrowser.create(JBCefBrowserBuilder().setCreateImmediately(false))
+        private val assistantSpeechJsQuery = JBCefJSQuery.create(chatScreen as JBCefBrowserBase)
         private val recordAssistantFeedbackJsQuery = JBCefJSQuery.create(chatScreen as JBCefBrowserBase)
         private val messageTextField = JTextField()
 
@@ -75,20 +80,23 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             contentPanel.add(createChatPanel(), BorderLayout.CENTER)
             contentPanel.add(createMessagePanel(), BorderLayout.SOUTH)
 
-            project.messageBus.connect().subscribe(AssistantNotifier.ASSISTANT_TOPIC, object : AssistantNotifier {
+            val connection = project.messageBus.connect()
+            connection.subscribe(AssistantNotifier.ASSISTANT_TOPIC, object : AssistantNotifier {
                 override fun onMessage(message: String) {
                     sendMessage(message)
                 }
             })
 
+            Disposer.register(this, assistantSpeechJsQuery)
             Disposer.register(this, recordAssistantFeedbackJsQuery)
+            Disposer.register(this, connection)
         }
 
         override fun dispose() {
         }
 
         private fun createChatPanel(): Component {
-            chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
+            // chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
             chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
             val resourceHandler = FileResourceProvider()
             resourceHandler.addResource("/") { StreamResourceHandler("webview", this) }
@@ -176,6 +184,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             val content = escape(message.content)
             val html = escape(renderMarkdown(message.content))
             val assistant = (message.role == Role.Assistant).toString()
+
             chatScreen.cefBrowser.executeJavaScript("window.appendMessage($assistant, \"${message.sessionId}\", \"${message.messageId}\", \"$content\", \"$html\")", "", 0)
         }
 
@@ -188,6 +197,28 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun registerJavaScriptCallback() {
+            assistantSpeechJsQuery.addHandler {
+                val speech = Json.decodeFromString<AssistantSpeech>(it)
+                val response = service.assistantSpeech(speech.message)
+
+                val charset = StandardCharsets.UTF_8
+                val audio = charset.decode(Base64.getEncoder().encode(response.audio)).toString()
+
+                chatScreen.cefBrowser.executeJavaScript("window.speak(\"${speech.messageId}\", \"${audio}\")", "", 0)
+
+                return@addHandler null
+            }
+
+            chatScreen.cefBrowser.executeJavaScript(
+                """window.assistantSpeech = function(messageId, message) {
+                        const request = JSON.stringify({
+                            messageId,
+                            message,
+                        });
+                        ${assistantSpeechJsQuery.inject("request")}
+                    };""".trimIndent(),
+                chatScreen.cefBrowser.url, 0)
+
             recordAssistantFeedbackJsQuery.addHandler {
                 val feedback = Json.decodeFromString<AssistantFeedback>(it)
                 service.assistantFeedback(feedback.sessionId, feedback.messageId, feedback.vote)

@@ -8,6 +8,8 @@ import ai.codemaker.sdkv2.client.model.AssistantCodeCompletionRequest;
 import ai.codemaker.sdkv2.client.model.AssistantCodeCompletionResponse;
 import ai.codemaker.sdkv2.client.model.AssistantCompletionRequest;
 import ai.codemaker.sdkv2.client.model.AssistantCompletionResponse;
+import ai.codemaker.sdkv2.client.model.AssistantSpeechRequest;
+import ai.codemaker.sdkv2.client.model.AssistantSpeechResponse;
 import ai.codemaker.sdkv2.client.model.CompletionRequest;
 import ai.codemaker.sdkv2.client.model.CompletionResponse;
 import ai.codemaker.sdkv2.client.model.CreateContextRequest;
@@ -117,6 +119,15 @@ public final class DefaultClient implements Client {
     }
 
     @Override
+    public AssistantSpeechResponse assistantSpeech(AssistantSpeechRequest request) {
+        final Codemakerai.AssistantSpeechRequest assistantSpeechRequest = createAssistantSpeechRequest(request);
+
+        final Codemakerai.AssistantSpeechResponse assistantSpeechResponse = doAssistantSpeech(assistantSpeechRequest);
+
+        return createAssistantSpeechResponse(assistantSpeechResponse);
+    }
+
+    @Override
     public RegisterAssistantFeedbackResponse registerAssistantFeedback(RegisterAssistantFeedbackRequest request) {
         final Codemakerai.RegisterAssistantFeedbackRequest registerAssistantFeedbackRequest = createRegisterAssistantFeedbackRequest(request);
 
@@ -213,6 +224,10 @@ public final class DefaultClient implements Client {
 
     private Codemakerai.AssistantCodeCompletionResponse doAssistantCodeCompletion(Codemakerai.AssistantCodeCompletionRequest request) {
         return doCall(client::assistantCodeCompletion, request);
+    }
+
+    private Codemakerai.AssistantSpeechResponse doAssistantSpeech(Codemakerai.AssistantSpeechRequest request) {
+        return doCall(client::assistantSpeech, request);
     }
 
     private Codemakerai.RegisterAssistantFeedbackResponse doRegisterAssistantFeedback(Codemakerai.RegisterAssistantFeedbackRequest request) {
@@ -335,6 +350,12 @@ public final class DefaultClient implements Client {
                 .build();
     }
 
+    private Codemakerai.AssistantSpeechRequest createAssistantSpeechRequest(AssistantSpeechRequest request) {
+        return Codemakerai.AssistantSpeechRequest.newBuilder()
+                .setMessage(request.getMessage())
+                .build();
+    }
+
     private Codemakerai.RegisterAssistantFeedbackRequest createRegisterAssistantFeedbackRequest(RegisterAssistantFeedbackRequest request) {
         return Codemakerai.RegisterAssistantFeedbackRequest.newBuilder()
                 .setSessionId(request.getSessionId())
@@ -343,15 +364,19 @@ public final class DefaultClient implements Client {
                 .build();
     }
 
-    private RegisterAssistantFeedbackResponse createRegisterAssistantFeedbackResponse(Codemakerai.RegisterAssistantFeedbackResponse registerAssistantFeedbackResponse) {
-        return new RegisterAssistantFeedbackResponse();
-    }
-
     private AssistantCodeCompletionResponse createAssistantCodeCompletionResponse(Codemakerai.AssistantCodeCompletionResponse response) {
         final Codemakerai.Source content = response.getOutput().getSource();
         final String output = decodeOutput(content);
 
         return new AssistantCodeCompletionResponse(response.getSessionId(), response.getMessageId(), response.getMessage(), new Output(output));
+    }
+
+    private AssistantSpeechResponse createAssistantSpeechResponse(Codemakerai.AssistantSpeechResponse assistantSpeechResponse) {
+        return new AssistantSpeechResponse(assistantSpeechResponse.getAudio().asReadOnlyByteBuffer());
+    }
+
+    private RegisterAssistantFeedbackResponse createRegisterAssistantFeedbackResponse(Codemakerai.RegisterAssistantFeedbackResponse registerAssistantFeedbackResponse) {
+        return new RegisterAssistantFeedbackResponse();
     }
 
     private Codemakerai.CompletionRequest createCompletionRequest(CompletionRequest request) {

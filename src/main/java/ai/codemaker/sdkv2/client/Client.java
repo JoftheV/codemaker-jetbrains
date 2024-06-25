@@ -8,6 +8,8 @@ import ai.codemaker.sdkv2.client.model.AssistantCodeCompletionRequest;
 import ai.codemaker.sdkv2.client.model.AssistantCodeCompletionResponse;
 import ai.codemaker.sdkv2.client.model.AssistantCompletionRequest;
 import ai.codemaker.sdkv2.client.model.AssistantCompletionResponse;
+import ai.codemaker.sdkv2.client.model.AssistantSpeechRequest;
+import ai.codemaker.sdkv2.client.model.AssistantSpeechResponse;
 import ai.codemaker.sdkv2.client.model.CompletionRequest;
 import ai.codemaker.sdkv2.client.model.CompletionResponse;
 import ai.codemaker.sdkv2.client.model.CreateContextRequest;
@@ -30,6 +32,8 @@ public interface Client extends AutoCloseable {
     AssistantCompletionResponse assistantCompletion(AssistantCompletionRequest request);
 
     AssistantCodeCompletionResponse assistantCodeCompletion(AssistantCodeCompletionRequest request);
+
+    AssistantSpeechResponse assistantSpeech(AssistantSpeechRequest request);
 
     RegisterAssistantFeedbackResponse registerAssistantFeedback(RegisterAssistantFeedbackRequest request);
 

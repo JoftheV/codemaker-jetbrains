@@ -114,6 +114,18 @@ class CodeMakerService(private val project: Project) {
         }
     }
 
+    fun assistantSpeech(message: String): AssistantSpeechResponse {
+        try {
+            return client.assistantSpeech(createAssistantSpeechRequest(message))
+        } catch (e: UnauthorizedException) {
+            logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to process assistant completion.", e)
+            throw e
+        }
+    }
+
     fun assistantFeedback(sessionId: String, messageId: String, vote: String): RegisterAssistantFeedbackResponse {
         try {
             return client.registerAssistantFeedback(createRegisterAssistantFeedbackRequest(sessionId, messageId, vote))
@@ -482,6 +494,10 @@ class CodeMakerService(private val project: Project) {
                 Input(source),
                 Options(null, null, null, false, false, contextId, model, null, null, null)
         )
+    }
+
+    private fun createAssistantSpeechRequest(message: String): AssistantSpeechRequest {
+        return AssistantSpeechRequest(message)
     }
 
     private fun createRegisterAssistantFeedbackRequest(sessionId: String, messageId: String, vote: String): RegisterAssistantFeedbackRequest {

@@ -98,6 +98,32 @@
     </div>
 </div>
 <script>
+    const promises = new Map();
+
+    window.speak = function (id, audio) {
+        const resolvePromise = () => {
+            const promise = promises.get(id);
+            if (promise) {
+                promises.delete(id);
+                promise();
+            }
+        };
+
+        try {
+            const buffer = Uint8Array.from(atob(audio), c => c.charCodeAt(0));
+            const url = window.URL.createObjectURL(new Blob([buffer], {type: 'audio/mp3'}));
+            const player = new Audio(url);
+            player.autoplay = true;
+            player.addEventListener('ended', () => {
+                resolvePromise();
+                window.URL.revokeObjectURL(url);
+            });
+            player.play();
+        } catch (error) {
+            resolvePromise();
+        }
+    }
+
     window.appendMessage = function (assistant, sessionId, messageId, message, html) {
         const card = document.createElement("div");
         card.classList.add("card", assistant ? "assistant" : "user");
@@ -117,6 +143,11 @@
             controls.classList.add("controls");
             card.append(controls);
 
+            const equalizerButton = document.createElement('img');
+            equalizerButton.classList.add('icon');
+            equalizerButton.src = "media/equalizer.svg";
+            controls.append(equalizerButton);
+
             const upVoteButton = document.createElement('img');
             upVoteButton.classList.add('icon');
             upVoteButton.src = "media/thumbs-up-off.svg";
@@ -131,6 +162,19 @@
             copyButton.classList.add('icon');
             copyButton.src = "media/copy-off.svg";
             controls.append(copyButton);
+
+            equalizerButton.addEventListener('click', function (event) {
+                equalizerButton.src = "media/pause.svg";
+
+                const promise = new Promise((resolve, reject) => {
+                    promises.set(messageId, resolve);
+                });
+                promise.then(() => {
+                    equalizerButton.src = "media/equalizer.svg";
+                });
+
+                window.assistantSpeech(messageId, message);
+            });
 
             upVoteButton.addEventListener('click', function (event) {
                 upVoteButton.src = "media/thumbs-up.svg";
