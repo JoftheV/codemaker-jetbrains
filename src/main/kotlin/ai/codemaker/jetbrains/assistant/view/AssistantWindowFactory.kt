@@ -96,7 +96,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun createChatPanel(): Component {
-            // chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
+            chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
             chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
             val resourceHandler = FileResourceProvider()
             resourceHandler.addResource("/") { StreamResourceHandler("webview", this) }
@@ -198,13 +198,19 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         private fun registerJavaScriptCallback() {
             assistantSpeechJsQuery.addHandler {
-                val speech = Json.decodeFromString<AssistantSpeech>(it)
-                val response = service.assistantSpeech(speech.message)
+                ApplicationManager.getApplication().executeOnPooledThread {
+                    val speech = Json.decodeFromString<AssistantSpeech>(it)
+                    val response = service.assistantSpeech(speech.message)
 
-                val charset = StandardCharsets.UTF_8
-                val audio = charset.decode(Base64.getEncoder().encode(response.audio)).toString()
+                    val charset = StandardCharsets.UTF_8
+                    val audio = charset.decode(Base64.getEncoder().encode(response.audio)).toString()
 
-                chatScreen.cefBrowser.executeJavaScript("window.speak(\"${speech.messageId}\", \"${audio}\")", "", 0)
+                    chatScreen.cefBrowser.executeJavaScript(
+                        "window.speak(\"${speech.messageId}\", \"${audio}\")",
+                        "",
+                        0
+                    )
+                }
 
                 return@addHandler null
             }
@@ -220,8 +226,11 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
                 chatScreen.cefBrowser.url, 0)
 
             recordAssistantFeedbackJsQuery.addHandler {
-                val feedback = Json.decodeFromString<AssistantFeedback>(it)
-                service.assistantFeedback(feedback.sessionId, feedback.messageId, feedback.vote)
+                ApplicationManager.getApplication().executeOnPooledThread {
+                    val feedback = Json.decodeFromString<AssistantFeedback>(it)
+                    service.assistantFeedback(feedback.sessionId, feedback.messageId, feedback.vote)
+                }
+                
                 return@addHandler null
             }
 
