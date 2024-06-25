@@ -230,7 +230,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
                     val feedback = Json.decodeFromString<AssistantFeedback>(it)
                     service.assistantFeedback(feedback.sessionId, feedback.messageId, feedback.vote)
                 }
-                
+
                 return@addHandler null
             }
 
