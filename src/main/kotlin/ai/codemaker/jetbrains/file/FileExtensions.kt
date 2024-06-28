@@ -13,6 +13,7 @@ class FileExtensions {
                 "cpp" to Language.CPP,
                 "cc" to Language.CPP,
                 "cxx" to Language.CPP,
+                "py" to Language.PYTHON,
                 "js" to Language.JAVASCRIPT,
                 "jsx" to Language.JAVASCRIPT,
                 "php" to Language.PHP,
