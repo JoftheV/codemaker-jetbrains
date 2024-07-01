@@ -25,6 +25,8 @@ public class Options {
 
     private final Visibility visibility;
 
+    private final LanguageCode language;
+
     public Options(
             Modify modify,
             String codePath,
@@ -35,7 +37,8 @@ public class Options {
             String model,
             Integer overrideIndent,
             Integer minimalLinesLength,
-            Visibility visibility) {
+            Visibility visibility,
+            LanguageCode language) {
         this.modify = modify;
         this.codePath = codePath;
         this.prompt = prompt;
@@ -46,6 +49,7 @@ public class Options {
         this.overrideIndent = overrideIndent;
         this.minimalLinesLength = minimalLinesLength;
         this.visibility = visibility;
+        this.language = language;
     }
 
     public Modify getModify() {
@@ -86,5 +90,9 @@ public class Options {
 
     public Visibility getVisibility() {
         return visibility;
+    }
+
+    public LanguageCode getLanguage() {
+        return language;
     }
 }

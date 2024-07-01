@@ -3,6 +3,7 @@
  */
 package ai.codemaker.jetbrains.settings
 
+import ai.codemaker.sdkv2.client.model.LanguageCode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
@@ -38,6 +39,9 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState> {
 
     @JvmField
     var extendedSourceContextDepth: Int = 1
+
+    @JvmField
+    var assistantLanguage: LanguageCode? = null
 
     @JvmField
     var assistantActionsEnabled: Boolean = true

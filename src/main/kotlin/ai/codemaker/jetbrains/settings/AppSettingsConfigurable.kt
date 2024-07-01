@@ -35,6 +35,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
                 || settingsComponent!!.predictiveGenerationEnabled != settings.predictiveGenerationEnabled
                 || settingsComponent!!.extendedSourceContextEnabled != settings.extendedSourceContextEnabled
                 || settingsComponent!!.extendedSourceContextDepth != settings.extendedSourceContextDepth
+                || settingsComponent!!.assistantLanguage != settings.assistantLanguage
                 || settingsComponent!!.assistantActionsEnabled != settings.assistantActionsEnabled
                 || settingsComponent!!.assistantCodeVisionEnabled != settings.assistantCodeVisionEnabled
                 || settingsComponent!!.syntaxAutocorrectionEnabled != settings.syntaxAutocorrectionEnabled
@@ -52,6 +53,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settings.predictiveGenerationEnabled = settingsComponent!!.predictiveGenerationEnabled
         settings.extendedSourceContextEnabled = settingsComponent!!.extendedSourceContextEnabled
         settings.extendedSourceContextDepth = settingsComponent!!.extendedSourceContextDepth
+        settings.assistantLanguage = settingsComponent!!.assistantLanguage
         settings.assistantActionsEnabled = settingsComponent!!.assistantActionsEnabled
         settings.assistantCodeVisionEnabled = settingsComponent!!.assistantCodeVisionEnabled
         settings.syntaxAutocorrectionEnabled = settingsComponent!!.syntaxAutocorrectionEnabled
@@ -69,6 +71,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settingsComponent!!.predictiveGenerationEnabled = settings.predictiveGenerationEnabled
         settingsComponent!!.extendedSourceContextEnabled = settings.extendedSourceContextEnabled
         settingsComponent!!.extendedSourceContextDepth = settings.extendedSourceContextDepth
+        settingsComponent!!.assistantLanguage = settings.assistantLanguage
         settingsComponent!!.assistantActionsEnabled = settings.assistantActionsEnabled
         settingsComponent!!.assistantCodeVisionEnabled = settings.assistantCodeVisionEnabled
         settingsComponent!!.syntaxAutocorrectionEnabled = settings.syntaxAutocorrectionEnabled

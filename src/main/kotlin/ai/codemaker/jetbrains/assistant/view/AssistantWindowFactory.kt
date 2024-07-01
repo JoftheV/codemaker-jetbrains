@@ -170,7 +170,8 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
                             val response = service.assistantCodeCompletion(input, file)
                             addMessage(response.sessionId, response.messageId, response.message, Role.Assistant)
                         } else {
-                            val response = service.assistantCompletion(input)
+                            val language = AppSettingsState.instance.assistantLanguage
+                            val response = service.assistantCompletion(input, language)
                             addMessage(response.sessionId, response.messageId, response.message, Role.Assistant)
                         }
                     } catch (e: Exception) {

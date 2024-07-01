@@ -8,11 +8,18 @@ public class AssistantCompletionRequest {
 
     private final String message;
 
-    public AssistantCompletionRequest(String message) {
+    private final Options options;
+
+    public AssistantCompletionRequest(String message, Options options) {
         this.message = message;
+        this.options = options;
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public Options getOptions() {
+        return options;
     }
 }

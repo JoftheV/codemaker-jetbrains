@@ -4,6 +4,7 @@
 package ai.codemaker.jetbrains.settings
 
 import ai.codemaker.jetbrains.service.CodeMakerService
+import ai.codemaker.sdkv2.client.model.LanguageCode
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
@@ -19,6 +20,7 @@ import javax.swing.JPanel
 
 class AppSettingsComponent(project: Project) {
     private val defaultModel = "default"
+    private val defaultAssistantLanguage = "default"
 
     val panel: JPanel
     private val apiKeyText = JBTextField()
@@ -30,6 +32,7 @@ class AppSettingsComponent(project: Project) {
     private val predictiveGenerationEnabledCheck = JBCheckBox()
     private val extendedSourceContextEnabledCheck = JBCheckBox()
     private val extendedSourceContextDepthCombo = ComboBox(arrayOf(1, 2, 3))
+    private val assistantLanguageCombo = ComboBox(arrayOf("default", "EN", "ES", "PT", "JP", "VI", "TR", "KO", "DE", "FR", "PL", "ZN"))
     private val assistantActionsEnabledCheck = JBCheckBox()
     private val assistantCodeVisionEnabledCheck = JBCheckBox()
     private val syntaxAutocorrectionEnabledCheck = JBCheckBox()
@@ -68,6 +71,7 @@ class AppSettingsComponent(project: Project) {
                 .addLabeledComponent(JBLabel("Enable extended source context: "), extendedSourceContextEnabledCheck, 1, false)
                 .addLabeledComponent(JBLabel("Extended source context depth: "), extendedSourceContextDepthCombo, 1, false)
                 .addSeparator()
+                .addLabeledComponent(JBLabel("Assistant language: "), assistantLanguageCombo, 1, false)
                 .addLabeledComponent(JBLabel("Enable assistant contextual operations: "), assistantActionsEnabledCheck, 1, false)
                 .addLabeledComponent(JBLabel("Enable assistant code vision: "), assistantCodeVisionEnabledCheck, 1, false)
                 .addSeparator()
@@ -144,6 +148,21 @@ class AppSettingsComponent(project: Project) {
         get() = extendedSourceContextDepthCombo.item
         set(item) {
             extendedSourceContextDepthCombo.item = item
+        }
+
+    var assistantLanguage: LanguageCode?
+        get() {
+            if (defaultAssistantLanguage == assistantLanguageCombo.item) {
+                return null
+            }
+            return LanguageCode.valueOf(assistantLanguageCombo.item)
+        }
+        set(language) {
+            if (language != null) {
+                assistantLanguageCombo.item = language.name
+            } else {
+                assistantLanguageCombo.item = defaultAssistantLanguage
+            }
         }
 
     var assistantActionsEnabled: Boolean

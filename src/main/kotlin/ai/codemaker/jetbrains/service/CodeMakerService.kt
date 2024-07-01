@@ -73,9 +73,9 @@ class CodeMakerService(private val project: Project) {
         process(Mode.FIX_SYNTAX, "Fixing code", path, modify, codePath)
     }
 
-    fun assistantCompletion(message: String): AssistantCompletionResponse {
+    fun assistantCompletion(message: String, language: LanguageCode?): AssistantCompletionResponse {
         try {
-            return client.assistantCompletion(createAssistantCompletionRequest(message))
+            return client.assistantCompletion(createAssistantCompletionRequest(message, language))
         } catch (e: UnauthorizedException) {
             logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
             throw e
@@ -463,7 +463,7 @@ class CodeMakerService(private val project: Project) {
                 mode,
                 language,
                 Input(source),
-                Options(modify, codePath, prompt, true, false, contextId, model, overrideIndent, minimalLinesLength, visibility)
+                Options(modify, codePath, prompt, true, false, contextId, model, overrideIndent, minimalLinesLength, visibility, null)
         )
     }
 
@@ -471,7 +471,7 @@ class CodeMakerService(private val project: Project) {
         return PredictRequest(
                 language,
                 Input(source),
-                Options(null, null, null, false, false, contextId, model, null, null, null)
+                Options(null, null, null, false, false, contextId, model, null, null, null, null)
         )
     }
 
@@ -479,12 +479,15 @@ class CodeMakerService(private val project: Project) {
         return CompletionRequest(
                 language,
                 Input(source),
-                Options(null, "@$offset", null, false, isMultilineAutocompletion, contextId, model, null, null, null)
+                Options(null, "@$offset", null, false, isMultilineAutocompletion, contextId, model, null, null, null, null)
         )
     }
 
-    private fun createAssistantCompletionRequest(message: String): AssistantCompletionRequest {
-        return AssistantCompletionRequest(message)
+    private fun createAssistantCompletionRequest(message: String, language: LanguageCode?): AssistantCompletionRequest {
+        return AssistantCompletionRequest(
+            message,
+            Options(null, null, null, false, false, null, null, null, null, null, language)
+        )
     }
 
     private fun createAssistantCodeCompletionRequest(message: String, language: Language, source: String, contextId: String?, model: String?): AssistantCodeCompletionRequest {
@@ -492,7 +495,7 @@ class CodeMakerService(private val project: Project) {
                 message,
                 language,
                 Input(source),
-                Options(null, null, null, false, false, contextId, model, null, null, null)
+                Options(null, null, null, false, false, contextId, model, null, null, null,  null)
         )
     }
 

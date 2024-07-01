@@ -76,6 +76,21 @@ enum Vote {
   DOWN_VOTE = 1;
 }
 
+enum LanguageCode {
+  UNSPECIFIED = 0;
+  EN = 1;
+  ES = 2;
+  PT = 3;
+  JP = 4;
+  VI = 5;
+  TR = 6;
+  KO = 7;
+  DE = 8;
+  FR = 9;
+  PL = 10;
+  ZN = 11;
+}
+
 message Source {
   bytes content = 1;
   Encoding encoding = 2;
@@ -137,6 +152,10 @@ message CompletionOptions {
   string model = 5;
 }
 
+message AssistantCompletionOptions {
+  LanguageCode language = 1;
+}
+
 message AssistantCodeCompletionOptions {
   string contextId = 1;
   string model = 2;
@@ -149,6 +168,7 @@ message PredictionOptions {
 
 message AssistantCompletionRequest {
   string message = 1;
+  AssistantCompletionOptions options = 2;
 }
 
 message AssistantCompletionResponse {

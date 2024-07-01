@@ -18,6 +18,7 @@ import ai.codemaker.sdkv2.client.model.DiscoverContextRequest;
 import ai.codemaker.sdkv2.client.model.DiscoverContextResponse;
 import ai.codemaker.sdkv2.client.model.Input;
 import ai.codemaker.sdkv2.client.model.Language;
+import ai.codemaker.sdkv2.client.model.LanguageCode;
 import ai.codemaker.sdkv2.client.model.ListModelsRequest;
 import ai.codemaker.sdkv2.client.model.ListModelsResponse;
 import ai.codemaker.sdkv2.client.model.Mode;
@@ -332,6 +333,7 @@ public final class DefaultClient implements Client {
     private Codemakerai.AssistantCompletionRequest createAssistantCompletionRequest(AssistantCompletionRequest request) {
         return Codemakerai.AssistantCompletionRequest.newBuilder()
                 .setMessage(request.getMessage())
+                .setOptions(createAssistantCompletionOptions(request.getOptions()))
                 .build();
     }
 
@@ -506,6 +508,16 @@ public final class DefaultClient implements Client {
         return builder.build();
     }
 
+    private Codemakerai.AssistantCompletionOptions createAssistantCompletionOptions(Options options) {
+        final Codemakerai.AssistantCompletionOptions.Builder builder = Codemakerai.AssistantCompletionOptions.newBuilder();
+
+        final Optional<LanguageCode> language = Optional.ofNullable(options.getLanguage());
+
+        language.ifPresent(val -> builder.setLanguage(mapLanguageCode(val)));
+
+        return builder.build();
+    }
+
     private Codemakerai.AssistantCodeCompletionOptions createAssistantCodeCompletionOptions(Options options) {
         final Codemakerai.AssistantCodeCompletionOptions.Builder builder = Codemakerai.AssistantCodeCompletionOptions.newBuilder();
 
@@ -571,6 +583,22 @@ public final class DefaultClient implements Client {
             case KOTLIN -> Codemakerai.Language.KOTLIN;
             case TYPESCRIPT -> Codemakerai.Language.TYPESCRIPT;
             case RUST -> Codemakerai.Language.RUST;
+        };
+    }
+
+    private Codemakerai.LanguageCode mapLanguageCode(LanguageCode languageCode) {
+        return switch (languageCode) {
+            case EN -> Codemakerai.LanguageCode.EN;
+            case ES -> Codemakerai.LanguageCode.ES;
+            case PT -> Codemakerai.LanguageCode.PT;
+            case JP -> Codemakerai.LanguageCode.JP;
+            case VI -> Codemakerai.LanguageCode.VI;
+            case TR -> Codemakerai.LanguageCode.TR;
+            case KO -> Codemakerai.LanguageCode.KO;
+            case DE -> Codemakerai.LanguageCode.DE;
+            case FR -> Codemakerai.LanguageCode.FR;
+            case PL -> Codemakerai.LanguageCode.PL;
+            case ZN -> Codemakerai.LanguageCode.ZN;
         };
     }
 
