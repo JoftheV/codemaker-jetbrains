@@ -159,6 +159,7 @@ message AssistantCompletionOptions {
 message AssistantCodeCompletionOptions {
   string contextId = 1;
   string model = 2;
+  LanguageCode language = 3;
 }
 
 message PredictionOptions {

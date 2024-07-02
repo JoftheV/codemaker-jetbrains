@@ -73,9 +73,11 @@ class CodeMakerService(private val project: Project) {
         process(Mode.FIX_SYNTAX, "Fixing code", path, modify, codePath)
     }
 
-    fun assistantCompletion(message: String, language: LanguageCode?): AssistantCompletionResponse {
+    fun assistantCompletion(message: String): AssistantCompletionResponse {
         try {
-            return client.assistantCompletion(createAssistantCompletionRequest(message, language))
+            val textLanguage = AppSettingsState.instance.assistantLanguage
+
+            return client.assistantCompletion(createAssistantCompletionRequest(message, textLanguage))
         } catch (e: UnauthorizedException) {
             logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
             throw e
@@ -85,8 +87,9 @@ class CodeMakerService(private val project: Project) {
         }
     }
 
-    fun assistantCodeCompletion(message: String, path: VirtualFile?): AssistantCodeCompletionResponse {
+    fun assistantCodeCompletion(message: String,path: VirtualFile?): AssistantCodeCompletionResponse {
         try {
+            val textLanguage = AppSettingsState.instance.assistantLanguage
             val model = AppSettingsState.instance.model
 
             val source = readFile(path!!)!!
@@ -95,7 +98,7 @@ class CodeMakerService(private val project: Project) {
             val contextId = registerContext(client, language!!, source, path.path)
 
             val response = client.assistantCodeCompletion(
-                createAssistantCodeCompletionRequest(message, language, source, contextId, model)
+                createAssistantCodeCompletionRequest(message, textLanguage, language, source, contextId, model)
             )
 
             if (response.output.source.isNotEmpty()) {
@@ -483,19 +486,19 @@ class CodeMakerService(private val project: Project) {
         )
     }
 
-    private fun createAssistantCompletionRequest(message: String, language: LanguageCode?): AssistantCompletionRequest {
+    private fun createAssistantCompletionRequest(message: String, textLanguage: LanguageCode?): AssistantCompletionRequest {
         return AssistantCompletionRequest(
             message,
-            Options(null, null, null, false, false, null, null, null, null, null, language)
+            Options(null, null, null, false, false, null, null, null, null, null, textLanguage)
         )
     }
 
-    private fun createAssistantCodeCompletionRequest(message: String, language: Language, source: String, contextId: String?, model: String?): AssistantCodeCompletionRequest {
+    private fun createAssistantCodeCompletionRequest(message: String, textLanguage: LanguageCode?, language: Language, source: String, contextId: String?, model: String?): AssistantCodeCompletionRequest {
         return AssistantCodeCompletionRequest(
                 message,
                 language,
                 Input(source),
-                Options(null, null, null, false, false, contextId, model, null, null, null,  null)
+                Options(null, null, null, false, false, contextId, model, null, null, null,  textLanguage)
         )
     }
 
