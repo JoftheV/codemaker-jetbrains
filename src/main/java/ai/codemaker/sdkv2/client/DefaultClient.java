@@ -352,10 +352,21 @@ public final class DefaultClient implements Client {
                 .build();
     }
 
+    private AssistantCodeCompletionResponse createAssistantCodeCompletionResponse(Codemakerai.AssistantCodeCompletionResponse response) {
+        final Codemakerai.Source content = response.getOutput().getSource();
+        final String output = decodeOutput(content);
+
+        return new AssistantCodeCompletionResponse(response.getSessionId(), response.getMessageId(), response.getMessage(), new Output(output));
+    }
+
     private Codemakerai.AssistantSpeechRequest createAssistantSpeechRequest(AssistantSpeechRequest request) {
         return Codemakerai.AssistantSpeechRequest.newBuilder()
                 .setMessage(request.getMessage())
                 .build();
+    }
+
+    private AssistantSpeechResponse createAssistantSpeechResponse(Codemakerai.AssistantSpeechResponse assistantSpeechResponse) {
+        return new AssistantSpeechResponse(assistantSpeechResponse.getAudio().asReadOnlyByteBuffer());
     }
 
     private Codemakerai.RegisterAssistantFeedbackRequest createRegisterAssistantFeedbackRequest(RegisterAssistantFeedbackRequest request) {
@@ -364,17 +375,6 @@ public final class DefaultClient implements Client {
                 .setMessageId(request.getMessageId())
                 .setVote(mapVote(request.getVote()))
                 .build();
-    }
-
-    private AssistantCodeCompletionResponse createAssistantCodeCompletionResponse(Codemakerai.AssistantCodeCompletionResponse response) {
-        final Codemakerai.Source content = response.getOutput().getSource();
-        final String output = decodeOutput(content);
-
-        return new AssistantCodeCompletionResponse(response.getSessionId(), response.getMessageId(), response.getMessage(), new Output(output));
-    }
-
-    private AssistantSpeechResponse createAssistantSpeechResponse(Codemakerai.AssistantSpeechResponse assistantSpeechResponse) {
-        return new AssistantSpeechResponse(assistantSpeechResponse.getAudio().asReadOnlyByteBuffer());
     }
 
     private RegisterAssistantFeedbackResponse createRegisterAssistantFeedbackResponse(Codemakerai.RegisterAssistantFeedbackResponse registerAssistantFeedbackResponse) {
@@ -523,9 +523,11 @@ public final class DefaultClient implements Client {
 
         final Optional<String> contextId = Optional.ofNullable(options.getContextId());
         final Optional<String> model = Optional.ofNullable(options.getModel());
+        final Optional<LanguageCode> language = Optional.ofNullable(options.getLanguage());
 
         contextId.ifPresent(builder::setContextId);
         model.ifPresent(builder::setModel);
+        language.ifPresent(val -> builder.setLanguage(mapLanguageCode(val)));
 
         return builder.build();
     }
