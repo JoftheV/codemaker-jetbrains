@@ -142,6 +142,7 @@ message ProcessOptions {
   int32 overrideIndent = 8;
   int32 minimalLinesLength = 9;
   Visibility visibility = 10;
+  LanguageCode language = 11;
 }
 
 message CompletionOptions {

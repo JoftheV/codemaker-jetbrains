@@ -1,11 +1,12 @@
 /*
- * Copyright 2023 CodeMaker AI Inc. All rights reserved.
+ * Copyright 2024 CodeMaker AI Inc. All rights reserved.
  */
 
 package ai.codemaker.jetbrains.action
 
 import ai.codemaker.jetbrains.dialog.DocumentationDialog
 import ai.codemaker.jetbrains.service.CodeMakerService
+import ai.codemaker.sdkv2.client.model.LanguageCode
 import ai.codemaker.sdkv2.client.model.Modify
 import ai.codemaker.sdkv2.client.model.Visibility
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -17,15 +18,19 @@ class CustomizeDocumentationAction : BaseAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val dialog = DocumentationDialog()
         if (dialog.showAndGet()) {
+            val modify = dialog.getModify()
+            val language = dialog.getLanguage()
             val overrideIndent = dialog.getOverrideIndent()
             val minimalLinesLength = dialog.getMinimalLinesLength()
             val visibility = dialog.getVisibility()
-            generateDocumentation(e, overrideIndent, minimalLinesLength, visibility)
+            generateDocumentation(e, modify, language, overrideIndent, minimalLinesLength, visibility)
         }
     }
 
     private fun generateDocumentation(
         e: AnActionEvent,
+        modify: Modify,
+        language: LanguageCode?,
         overrideIndent: Int?,
         minimalLinesLength: Int?,
         visibility: Visibility?
@@ -41,15 +46,16 @@ class CustomizeDocumentationAction : BaseAction() {
             documentManager.commitDocument(editor.document)
             service.generateDocumentation(
                 psiFile.virtualFile,
-                Modify.NONE,
+                modify,
                 null,
+                language,
                 overrideIndent,
                 minimalLinesLength,
                 visibility
             )
         } else {
             val file = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-            service.generateDocumentation(file, Modify.NONE, null, overrideIndent, minimalLinesLength, visibility)
+            service.generateDocumentation(file, Modify.NONE, null, language, overrideIndent, minimalLinesLength, visibility)
         }
     }
 }

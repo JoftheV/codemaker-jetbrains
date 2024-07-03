@@ -465,7 +465,7 @@ public final class DefaultClient implements Client {
         return builder.build();
     }
 
-    private static Codemakerai.ProcessOptions createProcessOptions(Options options) {
+    private Codemakerai.ProcessOptions createProcessOptions(Options options) {
         final Codemakerai.ProcessOptions.Builder builder = Codemakerai.ProcessOptions
                 .newBuilder();
 
@@ -477,6 +477,7 @@ public final class DefaultClient implements Client {
         final Optional<Integer> overrideIndent = Optional.ofNullable(options.getOverrideIndent());
         final Optional<Integer> minimalLinesLength = Optional.ofNullable(options.getMinimalLinesLength());
         final Optional<Visibility> visibility = Optional.ofNullable(options.getVisibility());
+        final Optional<LanguageCode> language = Optional.ofNullable(options.getLanguage());
 
         modify.ifPresent(value -> builder.setModify(mapModify(value)));
         codePath.ifPresent(builder::setCodePath);
@@ -486,6 +487,7 @@ public final class DefaultClient implements Client {
         overrideIndent.ifPresent(builder::setOverrideIndent);
         minimalLinesLength.ifPresent(builder::setMinimalLinesLength);
         visibility.ifPresent(value -> builder.setVisibility(mapVisibility(value)));
+        language.ifPresent(val -> builder.setLanguage(mapLanguageCode(val)));
 
         builder.setDetectSyntaxErrors(options.isDetectSyntaxErrors());
 
