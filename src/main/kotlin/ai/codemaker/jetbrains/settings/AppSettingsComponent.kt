@@ -32,7 +32,7 @@ class AppSettingsComponent(project: Project) {
     private val predictiveGenerationEnabledCheck = JBCheckBox()
     private val extendedSourceContextEnabledCheck = JBCheckBox()
     private val extendedSourceContextDepthCombo = ComboBox(arrayOf(1, 2, 3))
-    private val assistantLanguageCombo = ComboBox(arrayOf("default") + LanguageCode.entries.map { it.name })
+    private val assistantLanguageCombo = ComboBox(arrayOf(defaultAssistantLanguage) + LanguageCode.entries.map { it.name })
     private val assistantActionsEnabledCheck = JBCheckBox()
     private val assistantCodeVisionEnabledCheck = JBCheckBox()
     private val syntaxAutocorrectionEnabledCheck = JBCheckBox()
