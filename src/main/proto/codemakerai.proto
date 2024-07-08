@@ -5,6 +5,7 @@ service CodemakerService {
   rpc AssistantCompletion (AssistantCompletionRequest) returns (AssistantCompletionResponse);
   rpc AssistantCodeCompletion (AssistantCodeCompletionRequest) returns (AssistantCodeCompletionResponse);
   rpc AssistantSpeech (AssistantSpeechRequest) returns (AssistantSpeechResponse);
+  rpc AssistantSpeechStream (AssistantSpeechRequest) returns (stream AssistantSpeechResponse);
   rpc RegisterAssistantFeedback (RegisterAssistantFeedbackRequest) returns (RegisterAssistantFeedbackResponse);
   rpc Completion (CompletionRequest) returns (CompletionResponse);
   rpc Process (ProcessRequest) returns (ProcessResponse);

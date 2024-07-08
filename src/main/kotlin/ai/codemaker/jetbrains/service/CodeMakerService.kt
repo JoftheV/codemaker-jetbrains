@@ -8,7 +8,6 @@ import ai.codemaker.jetbrains.file.FileExtensions
 import ai.codemaker.jetbrains.settings.AppSettingsState
 import ai.codemaker.jetbrains.settings.AppSettingsState.Companion.instance
 import ai.codemaker.sdkv2.client.Client
-import ai.codemaker.sdkv2.client.DefaultClient
 import ai.codemaker.sdkv2.client.UnauthorizedException
 import ai.codemaker.sdkv2.client.model.*
 import com.intellij.openapi.application.ApplicationManager

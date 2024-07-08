@@ -56,11 +56,16 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -126,6 +131,16 @@ public final class DefaultClient implements Client {
         final Codemakerai.AssistantSpeechResponse assistantSpeechResponse = doAssistantSpeech(assistantSpeechRequest);
 
         return createAssistantSpeechResponse(assistantSpeechResponse);
+    }
+
+    @Override
+    public Stream<AssistantSpeechResponse> assistantSpeechStream(AssistantSpeechRequest request) {
+        final Codemakerai.AssistantSpeechRequest assistantSpeechRequest = createAssistantSpeechRequest(request);
+
+        final Iterator<Codemakerai.AssistantSpeechResponse> responseStream = doAssistantSpeechStream(assistantSpeechRequest);
+
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(responseStream, Spliterator.ORDERED), false)
+                .map(this::createAssistantSpeechResponse);
     }
 
     @Override
@@ -229,6 +244,10 @@ public final class DefaultClient implements Client {
 
     private Codemakerai.AssistantSpeechResponse doAssistantSpeech(Codemakerai.AssistantSpeechRequest request) {
         return doCall(client::assistantSpeech, request);
+    }
+
+    private Iterator<Codemakerai.AssistantSpeechResponse> doAssistantSpeechStream(Codemakerai.AssistantSpeechRequest request) {
+        return client.assistantSpeechStream(request);
     }
 
     private Codemakerai.RegisterAssistantFeedbackResponse doRegisterAssistantFeedback(Codemakerai.RegisterAssistantFeedbackRequest request) {

@@ -27,6 +27,9 @@ import ai.codemaker.sdkv2.client.model.RegisterAssistantFeedbackResponse;
 import ai.codemaker.sdkv2.client.model.RegisterContextRequest;
 import ai.codemaker.sdkv2.client.model.RegisterContextResponse;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+
 public interface Client extends AutoCloseable {
 
     AssistantCompletionResponse assistantCompletion(AssistantCompletionRequest request);
@@ -34,6 +37,8 @@ public interface Client extends AutoCloseable {
     AssistantCodeCompletionResponse assistantCodeCompletion(AssistantCodeCompletionRequest request);
 
     AssistantSpeechResponse assistantSpeech(AssistantSpeechRequest request);
+
+    Stream<AssistantSpeechResponse> assistantSpeechStream(AssistantSpeechRequest request);
 
     RegisterAssistantFeedbackResponse registerAssistantFeedback(RegisterAssistantFeedbackRequest request);
 
