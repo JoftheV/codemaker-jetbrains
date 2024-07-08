@@ -75,7 +75,7 @@ class CodeMakerService(private val project: Project) {
 
     fun assistantCompletion(message: String): AssistantCompletionResponse {
         try {
-            val textLanguage = AppSettingsState.instance.assistantLanguage
+            val textLanguage = AppSettingsState.instance.languageCode
 
             return client.assistantCompletion(createAssistantCompletionRequest(message, textLanguage))
         } catch (e: UnauthorizedException) {
@@ -89,7 +89,7 @@ class CodeMakerService(private val project: Project) {
 
     fun assistantCodeCompletion(message: String,path: VirtualFile?): AssistantCodeCompletionResponse {
         try {
-            val textLanguage = AppSettingsState.instance.assistantLanguage
+            val textLanguage = AppSettingsState.instance.languageCode
             val model = AppSettingsState.instance.model
 
             val source = readFile(path!!)!!

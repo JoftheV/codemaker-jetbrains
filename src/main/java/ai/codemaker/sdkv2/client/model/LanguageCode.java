@@ -8,12 +8,12 @@ public enum LanguageCode {
     EN,
     ES,
     PT,
-    JP,
+    JA,
     VI,
     TR,
     KO,
     DE,
     FR,
     PL,
-    ZN
+    ZH
 }

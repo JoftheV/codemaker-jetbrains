@@ -19,11 +19,14 @@ import javax.swing.JButton
 import javax.swing.JPanel
 
 class AppSettingsComponent(project: Project) {
-    private val defaultModel = "default"
-    private val defaultAssistantLanguage = "default"
+    private val defaultModel = "DEFAULT"
+    private val systemLanguage = "SYSTEM"
+    private val defaultLanguage = "DEFAULT"
 
     val panel: JPanel
     private val apiKeyText = JBTextField()
+    private val languageCombo =
+        ComboBox(arrayOf(systemLanguage, defaultLanguage) + LanguageCode.entries.map { it.name })
     private val modelCombo = ComboBox<String>()
     private val updateModelsButton = JButton("Update")
     private val codeActionsEnabledCheck = JBCheckBox()
@@ -32,7 +35,6 @@ class AppSettingsComponent(project: Project) {
     private val predictiveGenerationEnabledCheck = JBCheckBox()
     private val extendedSourceContextEnabledCheck = JBCheckBox()
     private val extendedSourceContextDepthCombo = ComboBox(arrayOf(1, 2, 3))
-    private val assistantLanguageCombo = ComboBox(arrayOf(defaultAssistantLanguage) + LanguageCode.entries.map { it.name })
     private val assistantActionsEnabledCheck = JBCheckBox()
     private val assistantCodeVisionEnabledCheck = JBCheckBox()
     private val syntaxAutocorrectionEnabledCheck = JBCheckBox()
@@ -57,29 +59,44 @@ class AppSettingsComponent(project: Project) {
         modelPanel.add(updateModelsButton)
 
         panel = FormBuilder.createFormBuilder()
-                .addComponent(createAccountLabel)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("API Key: "), apiKeyText, 1, false)
-                .addLabeledComponent(JBLabel("Model: "), modelPanel, 1, false)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("Enable autocompletion: "), autocompletionEnabledCheck, 1, false)
-                .addLabeledComponent(JBLabel("Enable multiline autocompletion: "), multilineAutocompletionEnabledCheck, 1, false)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("Enable code actions: "), codeActionsEnabledCheck, 1, false)
-                .addLabeledComponent(JBLabel("Enable predictive generation: "), predictiveGenerationEnabledCheck, 1, false)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("Enable extended source context: "), extendedSourceContextEnabledCheck, 1, false)
-                .addLabeledComponent(JBLabel("Extended source context depth: "), extendedSourceContextDepthCombo, 1, false)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("Assistant language: "), assistantLanguageCombo, 1, false)
-                .addLabeledComponent(JBLabel("Enable assistant contextual operations: "), assistantActionsEnabledCheck, 1, false)
-                .addLabeledComponent(JBLabel("Enable assistant code vision: "), assistantCodeVisionEnabledCheck, 1, false)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("Enable syntax autocorrection: "), syntaxAutocorrectionEnabledCheck, 1, false)
-                .addSeparator()
-                .addLabeledComponent(JBLabel("Endpoint: "), endpointText, 1, false)
-                .addComponentFillVertically(JPanel(), 0)
-                .panel
+            .addComponent(createAccountLabel)
+            .addSeparator()
+            .addLabeledComponent(JBLabel("API Key: "), apiKeyText, 1, false)
+            .addLabeledComponent(JBLabel("Language: "), languageCombo, 1, false)
+            .addLabeledComponent(JBLabel("Model: "), modelPanel, 1, false)
+            .addSeparator()
+            .addLabeledComponent(JBLabel("Enable autocompletion: "), autocompletionEnabledCheck, 1, false)
+            .addLabeledComponent(
+                JBLabel("Enable multiline autocompletion: "),
+                multilineAutocompletionEnabledCheck,
+                1,
+                false
+            )
+            .addSeparator()
+            .addLabeledComponent(JBLabel("Enable code actions: "), codeActionsEnabledCheck, 1, false)
+            .addLabeledComponent(JBLabel("Enable predictive generation: "), predictiveGenerationEnabledCheck, 1, false)
+            .addSeparator()
+            .addLabeledComponent(
+                JBLabel("Enable extended source context: "),
+                extendedSourceContextEnabledCheck,
+                1,
+                false
+            )
+            .addLabeledComponent(JBLabel("Extended source context depth: "), extendedSourceContextDepthCombo, 1, false)
+            .addSeparator()
+            .addLabeledComponent(
+                JBLabel("Enable assistant contextual operations: "),
+                assistantActionsEnabledCheck,
+                1,
+                false
+            )
+            .addLabeledComponent(JBLabel("Enable assistant code vision: "), assistantCodeVisionEnabledCheck, 1, false)
+            .addSeparator()
+            .addLabeledComponent(JBLabel("Enable syntax autocorrection: "), syntaxAutocorrectionEnabledCheck, 1, false)
+            .addSeparator()
+            .addLabeledComponent(JBLabel("Endpoint: "), endpointText, 1, false)
+            .addComponentFillVertically(JPanel(), 0)
+            .panel
     }
 
     private fun updateModels() {
@@ -105,7 +122,7 @@ class AppSettingsComponent(project: Project) {
 
     var model: String?
         get() {
-            if (defaultModel == modelCombo.item) {
+            if (modelCombo.item == defaultModel) {
                 return null
             }
             return modelCombo.item
@@ -150,19 +167,12 @@ class AppSettingsComponent(project: Project) {
             extendedSourceContextDepthCombo.item = item
         }
 
-    var assistantLanguage: LanguageCode?
+    var language: String?
         get() {
-            if (defaultAssistantLanguage == assistantLanguageCombo.item) {
-                return null
-            }
-            return LanguageCode.valueOf(assistantLanguageCombo.item)
+            return languageCombo.item
         }
         set(language) {
-            if (language != null) {
-                assistantLanguageCombo.item = language.name
-            } else {
-                assistantLanguageCombo.item = defaultAssistantLanguage
-            }
+            languageCombo.item = language
         }
 
     var assistantActionsEnabled: Boolean

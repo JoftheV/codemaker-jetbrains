@@ -9,12 +9,33 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
+import java.util.*
 
 @State(name = "ai.codemaker.jetbrains.settings.AppSettingsState", storages = [Storage("SdkSettingsPlugin.xml")])
 class AppSettingsState : PersistentStateComponent<AppSettingsState> {
 
     @JvmField
     var apiKey: String? = null
+
+    @JvmField
+    var language: String? = "SYSTEM"
+
+    val languageCode: LanguageCode?
+        get() {
+            try {
+                val language = this.language
+                if (language == null || language == "DEFAULT") {
+                    return null
+                } else if (language == "SYSTEM") {
+                    val locale = Locale.getDefault()
+                    return LanguageCode.valueOf(locale.language.uppercase())
+                } else {
+                    return LanguageCode.valueOf(language)
+                }
+            } catch (e: IllegalArgumentException) {
+                return null
+            }
+        }
 
     @JvmField
     var models: List<String>? = ArrayList()
@@ -39,9 +60,6 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState> {
 
     @JvmField
     var extendedSourceContextDepth: Int = 1
-
-    @JvmField
-    var assistantLanguage: LanguageCode? = null
 
     @JvmField
     var assistantActionsEnabled: Boolean = true

@@ -27,6 +27,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
     override fun isModified(): Boolean {
         val settings = AppSettingsState.instance
         return settingsComponent!!.apiKey != settings.apiKey
+                || settingsComponent!!.language != settings.language
                 || settingsComponent!!.models != settings.models
                 || settingsComponent!!.model != settings.model
                 || settingsComponent!!.codeActionsEnabled != settings.codeActionsEnabled
@@ -35,7 +36,6 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
                 || settingsComponent!!.predictiveGenerationEnabled != settings.predictiveGenerationEnabled
                 || settingsComponent!!.extendedSourceContextEnabled != settings.extendedSourceContextEnabled
                 || settingsComponent!!.extendedSourceContextDepth != settings.extendedSourceContextDepth
-                || settingsComponent!!.assistantLanguage != settings.assistantLanguage
                 || settingsComponent!!.assistantActionsEnabled != settings.assistantActionsEnabled
                 || settingsComponent!!.assistantCodeVisionEnabled != settings.assistantCodeVisionEnabled
                 || settingsComponent!!.syntaxAutocorrectionEnabled != settings.syntaxAutocorrectionEnabled
@@ -45,6 +45,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
     override fun apply() {
         val settings = AppSettingsState.instance
         settings.apiKey = settingsComponent!!.apiKey
+        settings.language = settingsComponent!!.language
         settings.models = settingsComponent!!.models
         settings.model = settingsComponent!!.model
         settings.codeActionsEnabled = settingsComponent!!.codeActionsEnabled
@@ -53,7 +54,6 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settings.predictiveGenerationEnabled = settingsComponent!!.predictiveGenerationEnabled
         settings.extendedSourceContextEnabled = settingsComponent!!.extendedSourceContextEnabled
         settings.extendedSourceContextDepth = settingsComponent!!.extendedSourceContextDepth
-        settings.assistantLanguage = settingsComponent!!.assistantLanguage
         settings.assistantActionsEnabled = settingsComponent!!.assistantActionsEnabled
         settings.assistantCodeVisionEnabled = settingsComponent!!.assistantCodeVisionEnabled
         settings.syntaxAutocorrectionEnabled = settingsComponent!!.syntaxAutocorrectionEnabled
@@ -63,6 +63,7 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
     override fun reset() {
         val settings = AppSettingsState.instance
         settingsComponent!!.apiKey = settings.apiKey
+        settingsComponent!!.language = settings.language
         settingsComponent!!.models = settings.models
         settingsComponent!!.model = settings.model
         settingsComponent!!.codeActionsEnabled = settings.codeActionsEnabled
@@ -71,7 +72,6 @@ class AppSettingsConfigurable(private val project: Project) : Configurable {
         settingsComponent!!.predictiveGenerationEnabled = settings.predictiveGenerationEnabled
         settingsComponent!!.extendedSourceContextEnabled = settings.extendedSourceContextEnabled
         settingsComponent!!.extendedSourceContextDepth = settings.extendedSourceContextDepth
-        settingsComponent!!.assistantLanguage = settings.assistantLanguage
         settingsComponent!!.assistantActionsEnabled = settings.assistantActionsEnabled
         settingsComponent!!.assistantCodeVisionEnabled = settings.assistantCodeVisionEnabled
         settingsComponent!!.syntaxAutocorrectionEnabled = settings.syntaxAutocorrectionEnabled
