@@ -595,14 +595,15 @@ public final class DefaultClient implements Client {
             case EN -> Codemakerai.LanguageCode.EN;
             case ES -> Codemakerai.LanguageCode.ES;
             case PT -> Codemakerai.LanguageCode.PT;
-            case JA -> Codemakerai.LanguageCode.JP;
+            case JA -> Codemakerai.LanguageCode.JA;
             case VI -> Codemakerai.LanguageCode.VI;
             case TR -> Codemakerai.LanguageCode.TR;
             case KO -> Codemakerai.LanguageCode.KO;
             case DE -> Codemakerai.LanguageCode.DE;
             case FR -> Codemakerai.LanguageCode.FR;
+            case IT -> Codemakerai.LanguageCode.IT;
             case PL -> Codemakerai.LanguageCode.PL;
-            case ZH -> Codemakerai.LanguageCode.ZN;
+            case ZH -> Codemakerai.LanguageCode.ZH;
         };
     }
 

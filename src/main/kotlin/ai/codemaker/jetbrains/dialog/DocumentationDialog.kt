@@ -15,9 +15,10 @@ import javax.swing.*
 
 
 class DocumentationDialog : DialogWrapper(true) {
+    private val defaultLanguage = "DEFAULT"
 
     private val modifyLabels = mapOf("Add" to Modify.NONE, "Replace" to Modify.REPLACE)
-    private val languageLabels = arrayOf("default") + LanguageCode.entries.map { it.name }
+    private val languageLabels = arrayOf(defaultLanguage) + LanguageCode.entries.map { it.name }
     private val visibilityLabels = mapOf("All" to Visibility.ALL, "Public" to Visibility.PUBLIC)
 
     private val modify = ComboBox(modifyLabels.keys.toTypedArray())
@@ -36,7 +37,7 @@ class DocumentationDialog : DialogWrapper(true) {
     }
 
     fun getLanguage(): LanguageCode? {
-        if (language.item == "default") {
+        if (language.item == defaultLanguage) {
             return null
         }
         return language.item?.let { LanguageCode.valueOf(it) }

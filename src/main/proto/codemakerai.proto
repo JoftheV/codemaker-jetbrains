@@ -81,14 +81,15 @@ enum LanguageCode {
   EN = 1;
   ES = 2;
   PT = 3;
-  JP = 4;
+  JA = 4;
   VI = 5;
   TR = 6;
   KO = 7;
   DE = 8;
   FR = 9;
   PL = 10;
-  ZN = 11;
+  ZH = 11;
+  IT = 12;
 }
 
 message Source {
