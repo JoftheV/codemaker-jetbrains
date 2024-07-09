@@ -219,6 +219,11 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
                         ${recordAssistantFeedbackJsQuery.inject("request")}
                     };""".trimIndent(),
                 chatScreen.cefBrowser.url, 0)
+
+            chatScreen.cefBrowser.executeJavaScript("""
+                window.speechEndpoint = "${speechServer?.url()}"
+            """.trimIndent(),
+                chatScreen.cefBrowser.url, 0)
         }
 
         inner class MessageTextKeyListener : KeyListener {
