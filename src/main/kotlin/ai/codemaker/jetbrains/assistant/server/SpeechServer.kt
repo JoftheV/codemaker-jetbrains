@@ -20,13 +20,15 @@ class SpeechServer(val service: CodeMakerService, parent: Disposable) : Disposab
 
     private var server: Undertow? = null
 
+    val port: Int = allocatePort()
+
     init {
         Disposer.register(parent, this)
     }
 
     fun start() {
         server = Undertow.builder()
-            .addHttpListener(53200, "localhost")
+            .addHttpListener(port, "localhost")
             .setHandler { exchange ->
                 exchange.responseHeaders.put(Headers.CONTENT_TYPE, "audio/mp3")
 
@@ -64,5 +66,10 @@ class SpeechServer(val service: CodeMakerService, parent: Disposable) : Disposab
 
     override fun dispose() {
         server?.stop()
+    }
+
+    private fun allocatePort(): Int {
+        val random = Random()
+        return 53000 + random.nextInt(1000)
     }
 }
