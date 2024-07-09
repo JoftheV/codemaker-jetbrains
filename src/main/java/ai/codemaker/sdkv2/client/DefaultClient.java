@@ -134,13 +134,12 @@ public final class DefaultClient implements Client {
     }
 
     @Override
-    public Stream<AssistantSpeechResponse> assistantSpeechStream(AssistantSpeechRequest request) {
+    public Iterator<AssistantSpeechResponse> assistantSpeechStream(AssistantSpeechRequest request) {
         final Codemakerai.AssistantSpeechRequest assistantSpeechRequest = createAssistantSpeechRequest(request);
 
-        final Iterator<Codemakerai.AssistantSpeechResponse> responseStream = doAssistantSpeechStream(assistantSpeechRequest);
+        final Iterator<Codemakerai.AssistantSpeechResponse> stream = doAssistantSpeechStream(assistantSpeechRequest);
 
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(responseStream, Spliterator.ORDERED), false)
-                .map(this::createAssistantSpeechResponse);
+        return Transform.iterator(stream, this::createAssistantSpeechResponse);
     }
 
     @Override

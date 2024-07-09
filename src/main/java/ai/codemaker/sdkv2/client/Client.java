@@ -38,7 +38,7 @@ public interface Client extends AutoCloseable {
 
     AssistantSpeechResponse assistantSpeech(AssistantSpeechRequest request);
 
-    Stream<AssistantSpeechResponse> assistantSpeechStream(AssistantSpeechRequest request);
+    Iterator<AssistantSpeechResponse> assistantSpeechStream(AssistantSpeechRequest request);
 
     RegisterAssistantFeedbackResponse registerAssistantFeedback(RegisterAssistantFeedbackRequest request);
 

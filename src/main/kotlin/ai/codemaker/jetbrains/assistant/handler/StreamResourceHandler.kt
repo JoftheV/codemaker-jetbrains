@@ -79,6 +79,7 @@ class StreamResourceHandler(private val resourcePath: String, parent: Disposable
     override fun dispose() {
         try {
             input?.close()
+            input = null
         } catch (e: IOException) {
             // ignores
         }

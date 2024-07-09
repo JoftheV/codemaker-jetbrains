@@ -98,44 +98,6 @@
     </div>
 </div>
 <script>
-    const assistantPlaybacks = new Map();
-
-    window.speak = function (id, audio) {
-        const resolvePromise = () => {
-            const playback = assistantPlaybacks.get(id);
-            if (playback) {
-                assistantPlaybacks.delete(id);
-                playback.complete();
-            }
-        };
-
-        try {
-            const playback = assistantPlaybacks.get(id);
-            if (!playback) {
-                return;
-            }
-
-            const buffer = Uint8Array.from(atob(audio), c => c.charCodeAt(0));
-            const url = window.URL.createObjectURL(new Blob([buffer], {type: 'audio/mp3'}));
-            const player = new Audio(url);
-            player.autoplay = true;
-            ['ended'].forEach(event => {
-                player.addEventListener(event, () => {
-                    resolvePromise();
-                    window.URL.revokeObjectURL(url);
-                });
-            });
-            player.play();
-            playback.cancelled.then(() => {
-                player.pause();
-                resolvePromise();
-                window.URL.revokeObjectURL(url);
-            });
-        } catch (error) {
-            resolvePromise();
-        }
-    }
-
     window.appendMessage = function (assistant, sessionId, messageId, message, html) {
         const card = document.createElement("div");
         card.classList.add("card", assistant ? "assistant" : "user");
@@ -175,34 +137,24 @@
             copyButton.src = "media/copy-off.svg";
             controls.append(copyButton);
 
+            let audio = null;
             equalizerButton.addEventListener('click', function (event) {
-                const audioPlayback = assistantPlaybacks.get(messageId);
-                if (audioPlayback) {
-                    audioPlayback.cancellation();
-                    return;
+                if (!audio) {
+                    equalizerButton.src = "media/pause.svg";
+
+                    const input = encodeBase64url(message);
+                    const audio = new Audio(`/speech?input=${input}`);
+                    audio.autoplay = true;
+                    ['pause', 'error', 'ended'].forEach((event) => {
+                        audio.addEventListener(event, () => {
+                            equalizerButton.src = "media/equalizer.svg";
+                            audio = null;
+                        });
+                    })
+                    audio.play();
+                } else {
+                    audio.pause();
                 }
-
-                equalizerButton.src = "media/pause.svg";
-
-                let complete;
-                const completePromise = new Promise((resolve, reject) => {
-                    complete = resolve;
-                }).then(() => {
-                    equalizerButton.src = "media/equalizer.svg";
-                });
-
-                let cancellation;
-                let cancelled = new Promise((resolve, reject) => {
-                    cancellation = resolve;
-                });
-
-                assistantPlaybacks.set(messageId, {
-                    complete,
-                    cancellation,
-                    cancelled
-                });
-
-                window.assistantSpeech(messageId, message);
             });
 
             upVoteButton.addEventListener('click', function (event) {
@@ -257,6 +209,15 @@
         if (pendingMessage) {
             pendingMessage.remove();
         }
+    }
+
+    function encodeBase64url(input) {
+        const encoded = new TextEncoder().encode(input);
+        const bytes = Array.from(encoded, (byte) =>
+            String.fromCodePoint(byte),
+        ).join("");
+        const base64Encoded = btoa(bytes);
+        return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
 </script>
 </body>

@@ -31,6 +31,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.Callable
+import java.util.stream.Stream
 
 @Service(Service.Level.PROJECT)
 class CodeMakerService(private val project: Project) {
@@ -119,6 +120,18 @@ class CodeMakerService(private val project: Project) {
     fun assistantSpeech(message: String): AssistantSpeechResponse {
         try {
             return client.assistantSpeech(createAssistantSpeechRequest(message))
+        } catch (e: UnauthorizedException) {
+            logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to process assistant completion.", e)
+            throw e
+        }
+    }
+
+    fun assistantSpeechStream(message: String): Iterator<AssistantSpeechResponse> {
+        try {
+            return client.assistantSpeechStream(createAssistantSpeechRequest(message))
         } catch (e: UnauthorizedException) {
             logger.error("Unauthorized request. Configure the the API Key in the Preferences > Tools > CodeMaker AI menu.", e)
             throw e
