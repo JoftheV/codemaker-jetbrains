@@ -29,6 +29,8 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java-util:4.27.0")
     implementation("com.google.protobuf:protobuf-java:4.27.0")
 
+    implementation("io.undertow:undertow-core:2.3.14.Final")
+
     runtimeOnly("io.grpc:grpc-netty-shaded:1.64.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")

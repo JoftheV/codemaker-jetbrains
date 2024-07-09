@@ -7,9 +7,9 @@ package ai.codemaker.jetbrains.assistant.view
 import ai.codemaker.jetbrains.assistant.Message
 import ai.codemaker.jetbrains.assistant.Role
 import ai.codemaker.jetbrains.assistant.handler.FileResourceProvider
-import ai.codemaker.jetbrains.assistant.handler.SpeechResourceHandler
 import ai.codemaker.jetbrains.assistant.handler.StreamResourceHandler
 import ai.codemaker.jetbrains.assistant.notification.AssistantNotifier
+import ai.codemaker.jetbrains.assistant.server.SpeechServer
 import ai.codemaker.jetbrains.file.FileExtensions
 import ai.codemaker.jetbrains.service.CodeMakerService
 import ai.codemaker.jetbrains.settings.AppSettingsState
@@ -71,6 +71,8 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
 
         private val service: CodeMakerService = project.getService(CodeMakerService::class.java)
 
+        private var speechServer: SpeechServer?
+
         init {
             contentPanel.setLayout(BorderLayout(0, 10))
             contentPanel.border = JBUI.Borders.empty(5)
@@ -84,6 +86,9 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
                 }
             })
 
+            speechServer = SpeechServer(service, this)
+            speechServer!!.start()
+
             Disposer.register(this, recordAssistantFeedbackJsQuery)
             Disposer.register(this, connection)
         }
@@ -96,7 +101,6 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             chatScreen.setProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU, true)
             chatScreen.loadURL(AssistantWindowFactory.ASSISTANT_HOME_VIEW)
             val resourceHandler = FileResourceProvider()
-            resourceHandler.addResource("/speech") { SpeechResourceHandler(service, this) }
             resourceHandler.addResource("/") { StreamResourceHandler("webview", this) }
             chatScreen.jbCefClient.addRequestHandler(resourceHandler, chatScreen.cefBrowser)
             chatScreen.jbCefClient.addLoadHandler(LoadHandler(), chatScreen.cefBrowser)

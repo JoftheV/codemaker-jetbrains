@@ -23,13 +23,6 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
 
     private val resources = HashMap<String, CefResourceProvider>()
 
-    private val REJECTING_RESOURCE_HANDLER: CefResourceHandler = object : CefResourceHandlerAdapter() {
-        override fun processRequest(request: CefRequest, callback: CefCallback): Boolean {
-            callback.cancel()
-            return false
-        }
-    }
-
     private val RESOURCE_REQUEST_HANDLER = object : CefResourceRequestHandlerAdapter() {
         override fun getResourceHandler(
             browser: CefBrowser?,
@@ -37,11 +30,11 @@ class FileResourceProvider() : CefRequestHandlerAdapter() {
             request: CefRequest
         ): CefResourceHandler? {
             val url = URI(request.url).toURL()
-            if (protocol != url.protocol) {
-                return REJECTING_RESOURCE_HANDLER
+            if (protocol == url.protocol) {
+                return resolveHandler(url)
             }
 
-            return resolveHandler(url)
+            return null
         }
     }
 
