@@ -98,7 +98,7 @@
     </div>
 </div>
 <script>
-    window.appendMessage = function (assistant, sessionId, messageId, message, html) {
+    window.appendMessage = function (assistant, sessionId, messageId, message, html, autoplay) {
         const card = document.createElement("div");
         card.classList.add("card", assistant ? "assistant" : "user");
 
@@ -138,7 +138,7 @@
             controls.append(copyButton);
 
             let audio = null;
-            equalizerButton.addEventListener('click', function (event) {
+            function togglePlay() {
                 if (!audio) {
                     equalizerButton.src = "media/pause.svg";
 
@@ -155,7 +155,16 @@
                 } else {
                     audio.pause();
                 }
+            }
+
+            equalizerButton.addEventListener('click', function (event) {
+                togglePlay();
             });
+
+            const isUserActive = navigator.userActivation && navigator.userActivation.isActive;
+            if (autoplay && isUserActive) {
+                togglePlay();
+            }
 
             upVoteButton.addEventListener('click', function (event) {
                 upVoteButton.src = "media/thumbs-up.svg";

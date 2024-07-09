@@ -62,6 +62,9 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState> {
     var extendedSourceContextDepth: Int = 1
 
     @JvmField
+    var assistantMuted: Boolean = true
+
+    @JvmField
     var assistantActionsEnabled: Boolean = true
 
     @JvmField

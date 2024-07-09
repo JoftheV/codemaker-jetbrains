@@ -35,6 +35,7 @@ class AppSettingsComponent(project: Project) {
     private val predictiveGenerationEnabledCheck = JBCheckBox()
     private val extendedSourceContextEnabledCheck = JBCheckBox()
     private val extendedSourceContextDepthCombo = ComboBox(arrayOf(1, 2, 3))
+    private val muteAssistantCheck = JBCheckBox()
     private val assistantActionsEnabledCheck = JBCheckBox()
     private val assistantCodeVisionEnabledCheck = JBCheckBox()
     private val syntaxAutocorrectionEnabledCheck = JBCheckBox()
@@ -84,13 +85,14 @@ class AppSettingsComponent(project: Project) {
             )
             .addLabeledComponent(JBLabel("Extended source context depth: "), extendedSourceContextDepthCombo, 1, false)
             .addSeparator()
+            .addLabeledComponent(JBLabel("Mute Assistant: "), muteAssistantCheck, 1, false)
             .addLabeledComponent(
-                JBLabel("Enable assistant contextual operations: "),
+                JBLabel("Enable Assistant contextual operations: "),
                 assistantActionsEnabledCheck,
                 1,
                 false
             )
-            .addLabeledComponent(JBLabel("Enable assistant code vision: "), assistantCodeVisionEnabledCheck, 1, false)
+            .addLabeledComponent(JBLabel("Enable Assistant Code Vision: "), assistantCodeVisionEnabledCheck, 1, false)
             .addSeparator()
             .addLabeledComponent(JBLabel("Enable syntax autocorrection: "), syntaxAutocorrectionEnabledCheck, 1, false)
             .addSeparator()
@@ -173,6 +175,12 @@ class AppSettingsComponent(project: Project) {
         }
         set(language) {
             languageCombo.item = language
+        }
+
+    var assistantMuted: Boolean
+        get() = muteAssistantCheck.isSelected
+        set(enabled) {
+            muteAssistantCheck.isSelected = enabled
         }
 
     var assistantActionsEnabled: Boolean

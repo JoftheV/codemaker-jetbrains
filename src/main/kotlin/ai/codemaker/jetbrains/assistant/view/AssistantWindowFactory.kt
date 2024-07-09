@@ -124,12 +124,12 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         private fun addMessage(input: String, role: Role) {
-            addMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), input, role)
+            addMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), input, role, false)
         }
 
-        private fun addMessage(sessionId: String, messageId: String, input: String, role: Role) {
+        private fun addMessage(sessionId: String, messageId: String, input: String, role: Role, autoplay: Boolean) {
             hidePendingMessage()
-            appendMessage(Message(sessionId, messageId, input, role, Date()))
+            appendMessage(Message(sessionId, messageId, input, role, Date(), autoplay))
         }
 
         private fun showPendingMessage() {
@@ -167,13 +167,14 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
                         val file = fileEditorManager.getSelectedEditor()?.file
 
                         val isAssistantActionsEnabled = AppSettingsState.instance.assistantActionsEnabled
+                        val autoplay = !AppSettingsState.instance.assistantMuted
 
                         if (isAssistantActionsEnabled && file != null && FileExtensions.isSupported(file.extension)) {
                             val response = service.assistantCodeCompletion(input, file)
-                            addMessage(response.sessionId, response.messageId, response.message, Role.Assistant)
+                            addMessage(response.sessionId, response.messageId, response.message, Role.Assistant, autoplay)
                         } else {
                             val response = service.assistantCompletion(input)
-                            addMessage(response.sessionId, response.messageId, response.message, Role.Assistant)
+                            addMessage(response.sessionId, response.messageId, response.message, Role.Assistant, autoplay)
                         }
                     } catch (e: Exception) {
                         addMessage("Assistant could not complete this request. Please try again.", Role.Assistant)
@@ -187,7 +188,7 @@ class AssistantWindowFactory : ToolWindowFactory, DumbAware {
             val html = escape(renderMarkdown(message.content))
             val assistant = (message.role == Role.Assistant).toString()
 
-            chatScreen.cefBrowser.executeJavaScript("window.appendMessage($assistant, \"${message.sessionId}\", \"${message.messageId}\", \"$content\", \"$html\")", "", 0)
+            chatScreen.cefBrowser.executeJavaScript("window.appendMessage($assistant, \"${message.sessionId}\", \"${message.messageId}\", \"$content\", \"$html\", ${message.autoplay})", "", 0)
         }
 
         private fun escape(input: String) = input.replace("\n", "\\n").replace("\"", "\\\"")
