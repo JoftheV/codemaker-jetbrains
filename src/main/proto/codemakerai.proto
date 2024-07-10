@@ -91,6 +91,8 @@ enum LanguageCode {
   PL = 10;
   ZH = 11;
   IT = 12;
+  ID = 13;
+  NL = 14;
 }
 
 message Source {

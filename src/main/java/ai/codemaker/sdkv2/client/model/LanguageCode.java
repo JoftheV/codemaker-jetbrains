@@ -8,6 +8,7 @@ public enum LanguageCode {
     EN,
     ES,
     PT,
+    ID,
     JA,
     VI,
     TR,
@@ -15,6 +16,7 @@ public enum LanguageCode {
     DE,
     FR,
     IT,
+    NL,
     PL,
     ZH
 }
