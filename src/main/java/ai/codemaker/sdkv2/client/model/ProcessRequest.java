@@ -14,11 +14,14 @@ public class ProcessRequest {
 
     private final Options options;
 
-    public ProcessRequest(Mode mode, Language language, Input input, Options options) {
+    private final String path;
+
+    public ProcessRequest(Mode mode, Language language, Input input, Options options, String path) {
         this.mode = mode;
         this.language = language;
         this.input = input;
         this.options = options;
+        this.path = path;
     }
 
     public Mode getMode() {
@@ -35,5 +38,9 @@ public class ProcessRequest {
 
     public Options getOptions() {
         return options;
+    }
+
+    public String getPath() {
+        return path;
     }
 }

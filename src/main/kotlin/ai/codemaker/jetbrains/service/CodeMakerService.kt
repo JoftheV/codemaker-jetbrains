@@ -273,8 +273,8 @@ class CodeMakerService(private val project: Project) {
     }
 
     @Throws(InterruptedException::class)
-    private fun process(client: Client, mode: Mode, language: Language, source: String, modify: Modify, codePath: String?, prompt: String?, contextId: String?, model: String?, textLanguage: LanguageCode?, overrideIndent: Int?, minimalLinesLength: Int?, visibility: Visibility?): String {
-        val response = client.process(createProcessRequest(mode, language, source, modify, codePath, prompt, contextId, model, textLanguage, overrideIndent, minimalLinesLength, visibility))
+    private fun process(client: Client, mode: Mode, language: Language, source: String, path: String, modify: Modify, codePath: String?, prompt: String?, contextId: String?, model: String?, textLanguage: LanguageCode?, overrideIndent: Int?, minimalLinesLength: Int?, visibility: Visibility?): String {
+        val response = client.process(createProcessRequest(mode, language, source, path, modify, codePath, prompt, contextId, model, textLanguage, overrideIndent, minimalLinesLength, visibility))
         return response.output.source
     }
 
@@ -324,7 +324,7 @@ class CodeMakerService(private val project: Project) {
 
             val contextId = registerContext(client, mode, language!!, source, file.path)
 
-            val output = process(client, mode, language, source, modify, codePath, prompt, contextId, model, textLanguage, overrideIndent, minimalLinesLength, visibility)
+            val output = process(client, mode, language, source, file.path, modify, codePath, prompt, contextId, model, textLanguage, overrideIndent, minimalLinesLength, visibility)
 
             writeFile(file, output)
         } catch (e: ProcessCanceledException) {
@@ -357,8 +357,20 @@ class CodeMakerService(private val project: Project) {
 
             val contextId = registerContext(client, mode, language!!, source, file.path)
             val output = process(
-                client, mode, language, source, Modify.NONE, null, null, contextId,
-                model, null, null, null, null
+                client,
+                mode,
+                language,
+                source,
+                file.path,
+                Modify.NONE,
+                null,
+                null,
+                contextId,
+                model,
+                null,
+                null,
+                null,
+                null
             )
             writeFile(file, output)
         } catch (e: ProcessCanceledException) {
@@ -473,12 +485,13 @@ class CodeMakerService(private val project: Project) {
         }
     }
 
-    private fun createProcessRequest(mode: Mode, language: Language, source: String, modify: Modify, codePath: String? = null, prompt: String? = null, contextId: String? = null, model: String ? = null, textLanguage: LanguageCode?, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: Visibility? = null): ProcessRequest {
+    private fun createProcessRequest(mode: Mode, language: Language, source: String, path: String, modify: Modify, codePath: String? = null, prompt: String? = null, contextId: String? = null, model: String ? = null, textLanguage: LanguageCode?, overrideIndent: Int? = null, minimalLinesLength: Int? = null, visibility: Visibility? = null): ProcessRequest {
         return ProcessRequest(
                 mode,
                 language,
                 Input(source),
-                Options(modify, codePath, prompt, true, false, contextId, model, overrideIndent, minimalLinesLength, visibility, textLanguage)
+                Options(modify, codePath, prompt, true, false, contextId, model, overrideIndent, minimalLinesLength, visibility, textLanguage),
+                path,
         )
     }
 

@@ -230,6 +230,7 @@ message ProcessRequest {
   Language language = 2;
   Input input = 3;
   ProcessOptions options = 4;
+  Metadata metadata = 5;
 }
 
 message ProcessResponse {

@@ -424,6 +424,7 @@ public final class DefaultClient implements Client {
                 .setLanguage(mapLanguage(request.getLanguage()))
                 .setInput(input)
                 .setOptions(createProcessOptions(request.getOptions()))
+                .setMetadata(Codemakerai.Metadata.newBuilder().setPath(request.getPath().toString()).build())
                 .build();
     }
 
