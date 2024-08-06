@@ -490,8 +490,8 @@ class CodeMakerService(private val project: Project) {
                 mode,
                 language,
                 Input(source),
-                Options(modify, codePath, prompt, true, false, contextId, model, overrideIndent, minimalLinesLength, visibility, textLanguage),
                 path,
+                Options(modify, codePath, prompt, true, false, contextId, model, overrideIndent, minimalLinesLength, visibility, textLanguage)
         )
     }
 

@@ -16,12 +16,12 @@ public class ProcessRequest {
 
     private final String path;
 
-    public ProcessRequest(Mode mode, Language language, Input input, Options options, String path) {
+    public ProcessRequest(Mode mode, Language language, Input input, String path, Options options) {
         this.mode = mode;
         this.language = language;
         this.input = input;
-        this.options = options;
         this.path = path;
+        this.options = options;
     }
 
     public Mode getMode() {
