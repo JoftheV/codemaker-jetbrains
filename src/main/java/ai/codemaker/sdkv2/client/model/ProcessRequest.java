@@ -36,11 +36,11 @@ public class ProcessRequest {
         return input;
     }
 
-    public Options getOptions() {
-        return options;
-    }
-
     public String getPath() {
         return path;
+    }
+
+    public Options getOptions() {
+        return options;
     }
 }
